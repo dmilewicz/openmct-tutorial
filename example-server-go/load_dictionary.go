@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"encoding/json"
@@ -34,9 +34,9 @@ type SpaceCraft struct {
 }
 
 
-func main() {
+func read_json(filename string) SpaceCraft {
 	var sp SpaceCraft
-	dictionary, err := ioutil.ReadFile("../dictionary.json")
+	dictionary, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
@@ -47,5 +47,6 @@ func main() {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	fmt.Printf("%+v", sp)
+	
+	return sp
 }

@@ -4,7 +4,10 @@ import (
 	"net/http"
 	"strings"
 	"fmt"
-	"server"
+	// "encoding/json"
+	"io/ioutil"
+	// "server"
+	// "craftsim"
 )
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
@@ -17,11 +20,19 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 func printRequest(w http.ResponseWriter, r *http.Request) {
 	http_request := strings.TrimPrefix(r.URL.Path, "/")
 	fmt.Println(http_request)
-	w.Write([]byte("Requested: " + http_request))
+
+	dictionary, err := ioutil.ReadFile("../dictionary.json")
+	if err != nil {
+		fmt.Println("error:", err)
+	} 
+	w.Write([]byte(dictionary))
 }
 
 
 func main() {
+	// server.Hello()
+	// craftsim.LoadCraftJSON("../dictionary.json")
+
 
 	http.Handle("/", http.FileServer(http.Dir("../")))
 	http.HandleFunc("/realtime/", printRequest)
@@ -30,4 +41,8 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
+
+	
+
+	// fmt.Println(sp)
 }
