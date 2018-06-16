@@ -36,31 +36,40 @@ import (
 // }
 
 type SpaceCraft struct {
-	PropFuel      int     `json:"prop.fuel"`
+	PropFuel      float64 `json:"prop.fuel"`
 	PropThrusters string  `json:"prop.thrusters"`
 	CommsRecd     int     `json:"comms.recd"`
 	CommsSent     int     `json:"comms.sent"`
-	PwrTemp       int     `json:"pwr.temp"`
+	PwrTemp       float64     `json:"pwr.temp"`
 	PwrC          float64 `json:"pwr.c"`
-	PwrV          int     `json:"pwr.v"`
+	PwrV          float64     `json:"pwr.v"`
 }
 
-func InitSpacecraft() {
-	sp := SpaceCraft {
+func (sp *SpaceCraft) InitSpacecraft() {
+	sp.PropFuel = 77
+	sp.PropThrusters = "OFF"
+	sp.CommsRecd = 0
+	sp.CommsSent = 0
+	sp.PwrTemp = 245
+	sp.PwrC = 8.15
+	sp.PwrV = 30
+}
+
+func NewSpacecraft() *SpaceCraft {
+	return &SpaceCraft {
 		77,    // PropFuel
 		"OFF", // PropThrusters
 		0,     // CommsRecd
 		0,     // CommsSent
 		245,   // PwrTemp
 		8.15,  // PwrC
-		30     // PwrV
-	}
-
-	return sp
+		30     /* PwrV */  }
 }
 
 
-func LoadCraftJSON(craftJSON string) SpaceCraft {
+
+
+func LoadCraftJSON(filename string) SpaceCraft {
 	dictionary, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println("error:", err)
@@ -76,8 +85,14 @@ func LoadCraftJSON(craftJSON string) SpaceCraft {
 	
 	return sp
 }
+/*
+ * Launch that sucker
+ */
+func (sp *SpaceCraft) Launch() {
+	sp.PropThrusters = "ON"
+}
 
-func reduceFuel(sp SpaceCraft) {
+func (sp *SpaceCraft) reduceFuel() {
 	if (sp.PropThrusters == "OFF") {
 		return
 	}
@@ -89,10 +104,10 @@ func reduceFuel(sp SpaceCraft) {
 	}
 }
 
-func updateState(sp SpaceCraft) {
-	reduceFuel(&sp)
+func (sp *SpaceCraft) updateState() {
+	sp.reduceFuel()
 	
-	sp.PwrTemp = (sp.PwrTemp * .985) + (math.Float64 * .25) + math.Sin(time.Now())
+	sp.PwrTemp = (sp.PwrTemp * .985) + (rand.Float64() * .25) + math.Sin(float64(time.Now().UnixNano() / 1000000))
 
 	if (sp.PropThrusters == "ON") {
 		sp.PwrC = 8.15
@@ -100,6 +115,16 @@ func updateState(sp SpaceCraft) {
 		sp.PwrC *= .985
 	}
 
-	sp.PwrV = 30 + (rand.Float64 ** 3)
+	sp.PwrV = 30 + math.Pow(rand.Float64(), 3.00)
 }
+
+func (sp *SpaceCraft) RunSim() {
+	for {
+		<-time.After(2 * time.Second)
+		
+		sp.updateState()
+		// fmt.Println(sp)
+	  }
+}
+
 

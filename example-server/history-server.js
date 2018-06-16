@@ -13,6 +13,7 @@ function HistoryServer(spacecraft) {
                 return p.timestamp > start && p.timestamp < end;
             }));
         }, []);
+        console.log(response)
         res.status(200).json(response).end();
     });
 
