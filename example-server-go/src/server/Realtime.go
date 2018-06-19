@@ -1,136 +1,166 @@
 package server
 
 import (
-	"net/http"
-	"bytes"
-	"time"
-	"crypto/sha1"
+	// "net/http"
+	// "net"
+	// "bytes"
+	// "time"
+	// "crypto/sha1"
 	// "craftsim"
-	"encoding/base64"
+	// "encoding/base64"
+	// "strconv"
 	"fmt"
-	"io/ioutil"
+	// "io/ioutil"
+	"encoding/json"
+	"errors"
+	"strings"
+
+	"golang.org/x/net/websocket"
+)
+
+type Command int
+
+const (
+	Subscribe   Command = 0
+	Unsubscribe Command = 1
 )
 
 type RealtimeServer struct {
-	Telem chan interface{}
+	Telem   chan Telemetry
+	RTCodec websocket.Codec
 }
 
-var keyGUID = []byte("258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-
-// From Gorilla
-func computeAcceptKey(challengeKey string) string {
-	h := sha1.New()
-	h.Write([]byte(challengeKey))
-	h.Write(keyGUID)
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+type RealtimeTelemetry struct {
+	Cmd Command
+	ID  string
 }
 
+func NewRealtimeServer(t chan Telemetry) RealtimeServer {
+	return RealtimeServer{t, websocket.Codec{websocket.JSON.Marshal, commandUnmarshal}}
+}
 
-func (rs *RealtimeServer) RunServer(w http.ResponseWriter, r *http.Request) {
-	hj, ok := w.(http.Hijacker)
-	if !ok {
-		http.Error(w, "webserver doesn't support hijacking", http.StatusInternalServerError)
-		return
+func commandUnmarshal(data []byte, payloadType byte, v interface{}) (err error) {
+	cmdString := string(data)
+
+	// ASSUMES NO SPACES IN BODY
+	cmds := strings.Split(cmdString, " ")
+	var cmd Command
+
+	switch cmds[0] {
+	case "subscribe":
+		cmd = Subscribe
+	case "unsubscribe":
+		cmd = Unsubscribe
+	default:
+		return errors.New("Not a valid command")
 	}
 
-	fmt.Println("connecting realtime...")
-	conn, brw, err := hj.Hijack()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	v = RealtimeTelemetry{cmd, cmds[1]}
 
-	if brw.Reader.Buffered() > 0 {
-		conn.Close() // unread data from client
-		fmt.Println("ERROR")
-	}
+	return nil
+}
 
-	fmt.Println("sending over connection...")
+func jsonMarshal(v interface{}) (msg []byte, payloadType byte, err error) {
+	msg, err = json.Marshal(v)
 
-	var buffer bytes.Buffer
+	// TODO: replace magic number
+	return msg, 1, err
+}
 
-	buffer.WriteString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nContent-Type: application/json\r\nSec-WebSocket-Accept: ")
-	buffer.WriteString(computeAcceptKey(r.Header.Get("Sec-Websocket-Key")))
-	buffer.WriteString("\r\n\r\n")
-
-
-	response := buffer.String()
-	fmt.Println(response)
-	conn.Write([]byte(response))
-	var p []byte
-	
-	fmt.Println(r.Header)
-
-	// res := "{\"timestamp\":1529016469335,\"value\":77,\"id\":\"prop.fuel\"}"
-
-	defer conn.Close()
+func (rs *RealtimeServer) RealtimeSocket(ws *websocket.Conn) {
+	// var buf = make([]byte, 1024)
+	// // n, err := ws.Read(buf)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
 
 	for {
-		<-time.After(2 * time.Second)
 
-		p, _ = ioutil.ReadAll(conn)
+		var rtc RealtimeTelemetry
 
-		// println(bytes_read)
+		rs.RTCodec.Receive(ws, rtc)
 
-		fmt.Println(string(p))
+		fmt.Println("We read", rtc.ID)
 
+		t := <-rs.Telem
+		t_json, _ := json.Marshal(t)
 
+		ws.Write(t_json)
 	}
-
-
-
-
 }
 
+// var keyGUID = []byte("258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 
+// // From Gorilla
+// func computeAcceptKey(challengeKey string) string {
+// 	h := sha1.New()
+// 	h.Write([]byte(challengeKey))
+// 	h.Write(keyGUID)
+// 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+// }
 
+// /*
+//  * Manual handshake completion. Static and universal. No error checking.
+//  *
+//  */
+// func completeHandshake(conn *net.Conn, r *http.Request) {
+// 	var buffer bytes.Buffer
+// 	buffer.WriteString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nContent-Type: application/json\r\nSec-WebSocket-Accept: ")
+// 	buffer.WriteString(computeAcceptKey(r.Header.Get("Sec-Websocket-Key")))
+// 	buffer.WriteString("\r\n\r\n")
 
+// 	(*conn).Write(buffer.Bytes())
+// }
 
+// func (rs *RealtimeServer) RunServer(w http.ResponseWriter, r *http.Request) {
+// 	hj, ok := w.(http.Hijacker)
+// 	if !ok {
+// 		http.Error(w, "webserver doesn't support hijacking", http.StatusInternalServerError)
+// 		return
+// 	}
 
+// 	conn, brw, err := hj.Hijack()
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
 
+// 	if brw.Reader.Buffered() > 0 {
+// 		conn.Close() // unread data from client
+// 		fmt.Println("ERROR")
+// 	}
 
+// 	// send handshake completion
+// 	completeHandshake(&conn, r)
 
+// 	// res := "{\"timestamp\":1529016469335,\"value\":77,\"id\":\"prop.fuel\"}"
 
+// 	defer conn.Close()
 
+// 	var p []byte
+// 	fmt.Println("connecting realtime...")
 
+// 	for {
+// 		// <-time.After(time.Second)
 
+// 		// p, _ := ioutil.ReadAll(conn)
+// 		p_len, _ := conn.Read(p)
+// 		// p_len := len(p)
 
+// 		if p_len > 0 {
+// 			fmt.Printf("Message length: " + strconv.Itoa(p_len) + ". Message: %s", p)
+// 		}
+// 		// else {
+// 		// 	fmt.Println("Message length: " + strconv.Itoa(p_len))
+// 		// }
 
+// 		// conn.Write([]byte(res))
+// 	}
 
+// 	fmt.Println("End realtime")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// }
 
 // // Upgrade upgrades the HTTP server connection to the WebSocket protocol.
 // //

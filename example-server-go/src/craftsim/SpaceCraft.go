@@ -56,7 +56,7 @@ func (sp *SpaceCraft) InitSpacecraft() {
 }
 
 func NewSpacecraft() *SpaceCraft {
-	return &SpaceCraft {
+	return &SpaceCraft     {
 		77,    // PropFuel
 		"OFF", // PropThrusters
 		0,     // CommsRecd
@@ -118,11 +118,12 @@ func (sp *SpaceCraft) updateState() {
 	sp.PwrV = 30 + math.Pow(rand.Float64(), 3.00)
 }
 
-func (sp *SpaceCraft) RunSim() {
+func (sp *SpaceCraft) RunSpacecraft(output chan SpaceCraft) {
 	for {
-		<-time.After(2 * time.Second)
+		<-time.After(time.Second)
 		
 		sp.updateState()
+		output <- *sp
 		// fmt.Println(sp)
 	  }
 }

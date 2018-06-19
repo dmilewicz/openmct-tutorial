@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 	"strings"
-	"fmt"
+	// "fmt"
 	// "encoding/json"
 	// "io/ioutil"
-	"server"
 	"craftsim"
+	"server"
+
+	"golang.org/x/net/websocket"
 )
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
@@ -24,32 +26,31 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 // 	dictionary, err := ioutil.ReadFile("../dictionary.json")
 // 	if err != nil {
 // 		fmt.Println("error:", err)
-// 	} 
+// 	}
 // 	w.Write([]byte(dictionary))
 // }
 
-
-
 func main() {
-	server.Hello()
-	// craftsim.LoadCraftJSON("../dictionary.json")
-	
-	rserver := &server.RealtimeServer { Telem: make(chan interface{}) }
-	hserver := &server.HistoryServer  { Telem: make(chan interface{}) }
 
-	sp := craftsim.NewSpacecraft()
-	go sp.RunSim()
+	// hserver := &server.HistoryServer  { Telem: make(chan interface{}) }
 
+	sim := craftsim.NewSim()
 
+	hserver := &server.HistoryServer{sim.HistoryRequest, sim.HistoryData}
+	rserver := server.NewRealtimeServer(sim.RealtimeData)
 
-	http.Handle("/", http.FileServer(http.Dir("../")))
-	go http.HandleFunc("/realtime/", rserver.RunServer)
+	go sim.RunSim()
+
+	// go
+	go http.Handle("/", http.FileServer(http.Dir("../")))
+	go http.Handle("/realtime/", websocket.Handler(rserver.RealtimeSocket))
 	go http.HandleFunc("/history/", hserver.RunServer)
+
 	http.HandleFunc("/ping", sayHello)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
 
-	fmt.Println(sp)
+	// fmt.Println(sp)
 }

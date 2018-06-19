@@ -1,18 +1,16 @@
 package server
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/url"
-	"strings"
 	"strconv"
-
+	"strings"
 )
 
-
 type HistoryServer struct {
-	Telem  chan interface{}
-	PubSub chan string
+	Request     chan DataRequest
+	HistoryData chan []Telemetry
 }
 
 type DataRequest struct {
@@ -24,26 +22,31 @@ type DataRequest struct {
 func extractRequest(u *url.URL) DataRequest {
 	q := u.Query()
 
-	start, _ := strconv.ParseInt(q["start"][0], 10, 64)
-	end, _   := strconv.ParseInt(q["end"][0], 10, 64)
+	// TODO: Decide to keep timestamp as int or float?
+	start, _ := strconv.ParseFloat(q.Get("start"), 64)
+	end, _ := strconv.ParseFloat(q.Get("end"), 64)
 
-	dr := DataRequest {
+	dr := DataRequest{
 		strings.TrimPrefix(u.Path, "/history/"),
-		start,
-		end }
-	
+		int64(start),
+		int64(end)}
+
 	return dr
 }
 
-
 func (hs *HistoryServer) RunServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("History server starting...")
-
+	// get request details
 	dr := extractRequest(r.URL)
 
+	// send data request and block for response
+	hs.Request <- dr
+	resp := <-hs.HistoryData
 
-	fmt.Println(dr)
+	// put response in json format
+	res, _ := json.Marshal(resp)
 
+	// set as JSON response
+	w.Header().Add("Content-Type", "application/json")
 
+	w.Write(res)
 }
-
