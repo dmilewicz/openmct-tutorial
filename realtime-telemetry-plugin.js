@@ -8,6 +8,7 @@ function RealtimeTelemetryPlugin() {
 
         socket.onmessage = function (event) {
             point = JSON.parse(event.data);
+            // console.log(point)
             if (listener[point.id]) {
                 listener[point.id](point);
             }
@@ -19,7 +20,8 @@ function RealtimeTelemetryPlugin() {
             },
             subscribe: function (domainObject, callback) {
                 listener[domainObject.identifier.key] = callback;
-                socket.send('subscribe ' + domainObject.identifier.key);
+                var sol = 'subscribe ' + domainObject.identifier.key
+                socket.send(sol);
                 return function unsubscribe() {
                     delete listener[domainObject.identifier.key];
                     socket.send('unsubscribe ' + domainObject.identifier.key);
