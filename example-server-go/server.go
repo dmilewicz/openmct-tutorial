@@ -41,7 +41,7 @@ func main() {
 
 	go sim.RunSim()
 
-	// go
+	// go go go
 	go http.Handle("/", http.FileServer(http.Dir("../")))
 	go http.Handle("/realtime/", websocket.Handler(rserver.RealtimeSocket))
 	go http.HandleFunc("/history/", hserver.RunServer)

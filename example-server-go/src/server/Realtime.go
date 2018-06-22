@@ -4,7 +4,7 @@ import (
 	// "net/http"
 	// "net"
 	// "bytes"
-	// "time"
+
 	// "crypto/sha1"
 	// "craftsim"
 	// "encoding/base64"
@@ -26,21 +26,29 @@ const (
 )
 
 type RealtimeServer struct {
-	Telem   chan Telemetry
+	TelemIn    <-chan Datum
+	RequestOut chan<- TelemetryCommand
+
 	RTCodec websocket.Codec
 }
 
-type RealtimeTelemetry struct {
+type TelemetryCommand struct {
 	Cmd Command
 	ID  string
 }
 
-func NewRealtimeServer(t chan Telemetry) RealtimeServer {
-	return RealtimeServer{t, websocket.Codec{websocket.JSON.Marshal, commandUnmarshal}}
+func NewRealtimeServer(t chan Datum, r chan TelemetryCommand) RealtimeServer {
+	return RealtimeServer{t, r, websocket.Codec{websocket.JSON.Marshal, commandUnmarshal}}
+}
+
+func describe(i interface{}) {
+	fmt.Printf("(%v)\n", i)
 }
 
 func commandUnmarshal(data []byte, payloadType byte, v interface{}) (err error) {
 	cmdString := string(data)
+
+	fmt.Println("raw data: " + cmdString)
 
 	// ASSUMES NO SPACES IN BODY
 	cmds := strings.Split(cmdString, " ")
@@ -55,7 +63,10 @@ func commandUnmarshal(data []byte, payloadType byte, v interface{}) (err error) 
 		return errors.New("Not a valid command")
 	}
 
-	v = RealtimeTelemetry{cmd, cmds[1]}
+	switch data := v.(type) {
+	case *TelemetryCommand:
+		*data = TelemetryCommand{cmd, cmds[1]}
+	}
 
 	return nil
 }
@@ -68,27 +79,55 @@ func jsonMarshal(v interface{}) (msg []byte, payloadType byte, err error) {
 }
 
 func (rs *RealtimeServer) RealtimeSocket(ws *websocket.Conn) {
-	// var buf = make([]byte, 1024)
-	// // n, err := ws.Read(buf)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
+
+	fmt.Println("rtsocket called again")
+	rs.Snd(rs.RTCodec, ws)
+
+	go Rcv(rs.RTCodec, ws)
+}
+
+func Rcv(c websocket.Codec, ws *websocket.Conn) {
+	var rtc TelemetryCommand
+
+	// for {
+	// 	<-time.After(time.Second)
+	fmt.Println("in rcv")
+
+	c.Receive(ws, &rtc)
 	// }
+}
 
+func (rs *RealtimeServer) Snd(c websocket.Codec, ws *websocket.Conn) {
 	for {
-
-		var rtc RealtimeTelemetry
-
-		rs.RTCodec.Receive(ws, rtc)
-
-		fmt.Println("We read", rtc.ID)
-
-		t := <-rs.Telem
-		t_json, _ := json.Marshal(t)
-
-		ws.Write(t_json)
+		t := <-rs.TelemIn
+		c.Send(ws, t)
 	}
 }
+
+// func (rs *RealtimeServer) RealtimeSocket(ws *websocket.Conn) {
+// var buf = make([]byte, 1024)
+// // n, err := ws.Read(buf)
+// if err != nil {
+// 	fmt.Println(err)
+// 	return
+// }
+
+// for {
+
+// 	var rtc RealtimeTelemetry
+
+// 	rs.RTCodec.Receive(ws, rtc)
+
+// 	fmt.Println("We read", rtc.ID)
+
+// 	t := <-rs.Telem
+// 	t_json, _ := json.Marshal(t)
+
+// 	ws.Write(t_json)
+// 	fmt.Println("looped")
+// }
+
+// }
 
 // var keyGUID = []byte("258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 

@@ -10,7 +10,7 @@ import (
 
 type HistoryServer struct {
 	Request     chan DataRequest
-	HistoryData chan []Telemetry
+	HistoryData chan []Datum
 }
 
 type DataRequest struct {
