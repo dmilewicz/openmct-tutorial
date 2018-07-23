@@ -1,10 +1,8 @@
 package main
 
-
 import "fmt"
 import "reflect"
 import "time"
-
 
 type SpaceCraft struct {
 	PropFuel      int     `json:"prop.fuel"`
@@ -16,35 +14,36 @@ type SpaceCraft struct {
 	PwrV          int     `json:"pwr.v"`
 }
 
-
-
 func main() {
 	messages := make(chan string, 2)
 	// go func() { messages <- "pong" ; messages <- pong}()
 
-
-    // messages <- "buffered"
+	// messages <- "buffered"
 	// messages <- "channel"
-	go func() { messages <- "ping" }()
+	// go func() { messages <- "ping" }()
 
-	msg := <-messages
-	fmt.Println(msg)
+	// msg := <-messages
+	// fmt.Println(msg)
 	// fmt.Println(<-messages)
 	// messages <- "third"
 
 	// msg = <-messages
 	// fmt.Println(msg)
 
-	fmt.Println(reflect.TypeOf(msg))
+	go lister("1", messages)
+	go lister("2", messages)
 
-	x :=SpaceCraft {
+	messages <- "heloo"
+	// fmt.Println(reflect.TypeOf(msg))
+
+	x := SpaceCraft{
 		77,    // PropFuel
 		"OFF", // PropThrusters
 		0,     // CommsRecd
 		0,     // CommsSent
 		245,   // PwrTemp
 		8.15,  // PwrC
-		30     /* PwrV */ }
+		30 /* PwrV */}
 
 	v := reflect.ValueOf(x)
 
@@ -60,3 +59,6 @@ func main() {
 	fmt.Println(time.Now())
 }
 
+func lister(name string, msg chan string) {
+	fmt.Println(name + " " + <-msg)
+}

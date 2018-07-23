@@ -1,24 +1,19 @@
 package craftsim
 
-import (
-	"server"
-)
+import "server"
 
 type Simulator struct {
 	history        []server.Telemetry
-	RealtimeData   chan server.Datum
+	RealtimeData   chan server.Telemetry
 	HistoryRequest chan server.DataRequest
 	HistoryData    chan []server.Datum
 	DataIn         chan SpaceCraft
 }
 
-// type Datum struct {
-// 	Sp        SpaceCraft
-// 	Timestamp int64
-// }
-
 func NewSim() Simulator {
-	return Simulator{[]server.Telemetry{}, make(chan server.Datum), make(chan server.DataRequest), make(chan []server.Datum), make(chan SpaceCraft)}
+	s := Simulator{[]server.Telemetry{}, make(chan server.Telemetry), make(chan server.DataRequest), make(chan []server.Datum), make(chan SpaceCraft)}
+	go s.RunSim()
+	return s
 }
 
 func (s *Simulator) RunSim() {
@@ -28,28 +23,26 @@ func (s *Simulator) RunSim() {
 
 	for {
 		dr := <-s.HistoryRequest
-		s.HistoryData <- s.getHistory(dr.Start, dr.End)
+		s.HistoryData <- s.getHistory(dr)
 	}
 }
 
 func (s *Simulator) storeHistory() {
 	for {
-		// sp :=
-
 		d := server.LoadTelemetry(<-s.DataIn)
 
-		s.RealtimeData <- d.Datum("prop.fuel")
+		s.RealtimeData <- d
 
 		s.history = append(s.history, d)
 	}
 }
 
-func (s *Simulator) getHistory(start int64, end int64) []server.Datum {
+func (s *Simulator) getHistory(dr server.DataRequest) []server.Datum {
 	var telem []server.Datum
 
 	for i, _ := range s.history {
-		if s.history[i].Timestamp > start && s.history[i].Timestamp < end {
-			telem = append(telem, s.history[i].Datum("prop.fuel"))
+		if s.history[i].Timestamp > dr.Start && s.history[i].Timestamp < dr.End {
+			telem = append(telem, s.history[i].Datum(dr.Value))
 		}
 	}
 

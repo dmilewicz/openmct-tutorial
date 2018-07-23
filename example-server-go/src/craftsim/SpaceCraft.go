@@ -2,11 +2,13 @@ package craftsim
 
 import (
 	// "strings"
+	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"encoding/json"
 	"math"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -21,7 +23,7 @@ import (
 // 		Range int `json:"range"`
 // 	} `json:"hints"`
 // 	Source string `json:"source,omitempty"`
-// } 
+// }
 
 // type InstrumentData struct {
 // 	Name   string `json:"name"`
@@ -40,9 +42,9 @@ type SpaceCraft struct {
 	PropThrusters string  `json:"prop.thrusters"`
 	CommsRecd     int     `json:"comms.recd"`
 	CommsSent     int     `json:"comms.sent"`
-	PwrTemp       float64     `json:"pwr.temp"`
+	PwrTemp       float64 `json:"pwr.temp"`
 	PwrC          float64 `json:"pwr.c"`
-	PwrV          float64     `json:"pwr.v"`
+	PwrV          float64 `json:"pwr.v"`
 }
 
 func (sp *SpaceCraft) InitSpacecraft() {
@@ -56,25 +58,22 @@ func (sp *SpaceCraft) InitSpacecraft() {
 }
 
 func NewSpacecraft() *SpaceCraft {
-	return &SpaceCraft     {
+	return &SpaceCraft{
 		77,    // PropFuel
 		"OFF", // PropThrusters
 		0,     // CommsRecd
 		0,     // CommsSent
 		245,   // PwrTemp
 		8.15,  // PwrC
-		30     /* PwrV */  }
+		30 /* PwrV */}
 }
-
-
-
 
 func LoadCraftJSON(filename string) SpaceCraft {
 	dictionary, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	
+
 	var sp SpaceCraft
 	err = json.Unmarshal(dictionary, &sp)
 	if err != nil {
@@ -82,22 +81,24 @@ func LoadCraftJSON(filename string) SpaceCraft {
 	}
 
 	fmt.Println(sp)
-	
+
 	return sp
 }
+
 /*
  * Launch that sucker
  */
 func (sp *SpaceCraft) Launch() {
+	fmt.Println("launched!")
 	sp.PropThrusters = "ON"
 }
 
 func (sp *SpaceCraft) reduceFuel() {
-	if (sp.PropThrusters == "OFF") {
+	if sp.PropThrusters == "OFF" {
 		return
 	}
 
-	if (sp.PropFuel <= 0) {
+	if sp.PropFuel > .5 {
 		sp.PropFuel = sp.PropFuel - .5
 	} else {
 		sp.PropFuel = 0
@@ -106,10 +107,10 @@ func (sp *SpaceCraft) reduceFuel() {
 
 func (sp *SpaceCraft) updateState() {
 	sp.reduceFuel()
-	
-	sp.PwrTemp = (sp.PwrTemp * .985) + (rand.Float64() * .25) + math.Sin(float64(time.Now().UnixNano() / 1000000))
 
-	if (sp.PropThrusters == "ON") {
+	sp.PwrTemp = (sp.PwrTemp * .985) + (rand.Float64() * .25) + math.Sin(float64(time.Now().UnixNano()/1000000))
+
+	if sp.PropThrusters == "ON" {
 		sp.PwrC = 8.15
 	} else {
 		sp.PwrC *= .985
@@ -119,13 +120,18 @@ func (sp *SpaceCraft) updateState() {
 }
 
 func (sp *SpaceCraft) RunSpacecraft(output chan SpaceCraft) {
+
+	go func() {
+		scanner := bufio.NewReader(os.Stdin)
+		scanner.ReadString('\n')
+		sp.Launch()
+	}()
+
 	for {
 		<-time.After(time.Second)
-		
+
 		sp.updateState()
 		output <- *sp
 		// fmt.Println(sp)
-	  }
+	}
 }
-
-

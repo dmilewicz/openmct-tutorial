@@ -19,6 +19,13 @@ type DataRequest struct {
 	End   int64
 }
 
+func NewHistoryServer() HistoryServer {
+	return HistoryServer{
+		Request:     make(chan DataRequest),
+		HistoryData: make(chan []Datum),
+	}
+}
+
 func extractRequest(u *url.URL) DataRequest {
 	q := u.Query()
 

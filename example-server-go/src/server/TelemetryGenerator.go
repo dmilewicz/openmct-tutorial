@@ -18,6 +18,9 @@ type Telemetry struct {
 	Timestamp int64
 }
 
+/*
+ * Loads a telemetry object for
+ */
 func LoadTelemetry(v interface{}) Telemetry {
 	val := reflect.ValueOf(v)
 
@@ -32,8 +35,12 @@ func LoadTelemetry(v interface{}) Telemetry {
 	return t
 }
 
+func (t Telemetry) GetIdx(key string) int {
+	return t.idx[key]
+}
+
 func (t Telemetry) Get(key string) interface{} {
-	tval := reflect.ValueOf(t)
+	tval := reflect.ValueOf(t.value)
 	return tval.Field(t.idx[key]).Interface()
 }
 
@@ -43,3 +50,13 @@ func (t Telemetry) Datum(name string) Datum {
 		t.Get(name),
 		name}
 }
+
+func (t Telemetry) Len() int {
+	return reflect.ValueOf(t.value).Type().NumField()
+}
+
+// func (t Telemetry) FeedData(v interface{}) {
+// 	if v.(type) == t.value.(type) {
+// 		t.value = v
+// 	}
+// }
