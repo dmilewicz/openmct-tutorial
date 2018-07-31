@@ -13,6 +13,6 @@ func main() {
 
 	sim := craftsim.NewSim()
 
-	server.NewServer(8080, sim.RealtimeData, sim.HistoryRequest, sim.HistoryData)
+	server.NewServer(8080, sim.RealtimeData, sim.HistoryRequest, sim.HistoryData).RunServer()
 
 }

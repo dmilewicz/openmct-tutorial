@@ -34,7 +34,7 @@ type TelemetryCommand struct {
 	ID  string
 }
 
-func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn) RealtimeServer {
+func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn, wg sync.WaitGroup) RealtimeServer {
 	// configure server
 	rs := RealtimeServer{
 		RequestOut: r,
@@ -47,21 +47,21 @@ func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn) 
 		RTCodec: websocket.Codec{websocket.JSON.Marshal, commandUnmarshal},
 	}
 
-	// rs.wg.Add(1)
-	rs.RealtimeSocket()
-	// rs.wg.Wait()
+	defer rs.Close(wg)
+	rs.wg.Add(2)
+	go rs.Recv(rs.RTCodec, rs.ws)
+	go rs.Send(rs.RTCodec, rs.ws)
+	rs.wg.Wait()
 
 	return rs
 }
 
-/**
- * Send and receive from socket
- **/
+// Send and receive from socket
 func (rs *RealtimeServer) RealtimeSocket() {
-	defer rs.Close()
-	// rs.wg.Add(2)
+	rs.wg.Add(2)
 	go rs.Recv(rs.RTCodec, rs.ws)
-	rs.Send(rs.RTCodec, rs.ws)
+	go rs.Send(rs.RTCodec, rs.ws)
+	rs.wg.Wait()
 }
 
 // Get subscrition commands from the websocket. Send them to the processing thread.
@@ -72,14 +72,14 @@ func (rs *RealtimeServer) Recv(c websocket.Codec, ws *websocket.Conn) {
 	for {
 		err = c.Receive(ws, &rtc)
 		if err != nil {
-			// fmt.Println("recv error:", err)
-			// rs.close <- true
-			// break
+			fmt.Println("recv error:", err)
+			rs.close <- true
+			break
 		}
 		rs.cmdChannel <- rtc
 	}
 
-	// rs.wg.Done()
+	rs.wg.Done()
 }
 
 func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
@@ -91,9 +91,7 @@ func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 	}
 }
 
-/**
- *	Send data through the websocket when available. Process the subscription commands.
- */
+// Send data through the websocket when available. Process the subscription commands.
 func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 	var d Telemetry
 	var i interface{}
@@ -106,25 +104,20 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 			d = i.(Telemetry)
 			for key := range rs.Subscribed {
 
+				// Telemetry will be broken now because 
 				err = c.Send(ws, d.Datum(key))
 
-				// closing system not really working
+				// closing works now -- need a universal close
 				if err != nil {
-					// fmt.Println("closing here")
-
 					fmt.Println(err)
-
-					rs.Close()
-					return
-					// rs.close <- true
+					rs.close <- true
 				}
 			}
 		case rtc = <-rs.cmdChannel:
 			rs.processCommand(rtc)
 		case <-rs.close:
 			fmt.Println("closing here")
-			rs.Close()
-			// rs.wg.Done()
+			rs.wg.Done()
 			return
 		}
 	}
@@ -154,7 +147,8 @@ func commandUnmarshal(data []byte, payloadType byte, v interface{}) (err error) 
 	return nil
 }
 
-func (rs *RealtimeServer) Close() {
+func (rs *RealtimeServer) Close(wg sync.WaitGroup) {
+	wg.Done()
 	rs.ws.Close()
 	rs.dataIn.CloseListener()
 }

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-
-	"labix.org/v2/mgo/bson"
 )
 
 const (
@@ -23,12 +21,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
+	p := bsonparser.NewBSONParser()
 	go func() {
-		var mapbuf bson.M
+		// var mapbuf bsonparser.TelemetryBuffer
+		i := 0
+
+		var ch chan bsonparser.TelemetryBuffer
+
+		p.GetDataChan(ch)
+
 		for {
-			p.Next(&mapbuf)
-			fmt.Println("read: ", mapbuf)
+			var v bsonparser.TelemetryBuffer
+			p.Next(&v)
+
+			// S := <-ch
+
+			// if i%50 == 0 {
+			fmt.Println("read: ", v)
+
+			// }
+			i++
 		}
 	}()
 

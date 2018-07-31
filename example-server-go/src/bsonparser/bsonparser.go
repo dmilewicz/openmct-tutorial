@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"reflect"
 
 	"labix.org/v2/mgo/bson"
 )
@@ -12,49 +13,68 @@ const (
 	DOC_LENGTH_NUM_BYTES = 4
 )
 
+type TelemetryBuffer struct {
+	Name      string      // `json:"name" bson:"name"`
+	Key       string      // `json:"key" bson:"key"`
+	Flags     int64       // `json:"flags,omitempty" bson:"flags,omitempty"`
+	Timestamp float64     // `json:"timestamp" bson:"timestamp"`
+	Raw_Type  int64       // `json:"raw_type" bson:"raw_type"`
+	Raw_Value interface{} // `json:"raw_value" bson:"raw_value"`
+	Eng_Type  int64       // `json:"eng_type,omitempty" bson:"eng_type,omitempty"`
+	Eng_Val   interface{} // `json:"eng_val,omitempty" bson:"eng_val,omitempty"`
+}
+
 type Parser interface {
 	Parse(io.Reader)
 
-	Next(map[string]interface{}) error
+	// setters for building
+	// SetByteBufferLength(length uint) Parser
+	// SetChanBufferLength(length uint) Parser
+	GetDataChan() chan<- interface{}
+	Next(interface{}) error
 
-	SetByteBufferLength(length uint) *bsonParser
-	SetChanBufferLength(length uint) *bsonParser
-
-	Close()
+	// Close()
 }
 
 type bsonParser struct {
-	bytesRead    int
-	delim        uint
-	buflen       uint
-	msglen       uint
-	dataDelivery chan *bson.M
+	bytesRead int
+	delim     uint
+	buflen    uint
+	msglen    uint
+	parseType reflect.Type
+
+	// dataDelivery chan *bson.M
+	dataDelivery reflect.Value //*TelemetryBuffer
 }
 
-func (bp bsonParser) SetByteBufferLength(length uint) bsonParser {
-	bp.buflen = length
-	return bp
-}
+// func (bp bsonParser) SetByteBufferLength(length uint) Parser {
+// 	bp.buflen = length
+// 	return bp
+// }
 
-func (bp bsonParser) SetChanBufferLength(length uint) bsonParser {
-	bp.dataDelivery = make(chan *bson.M, length)
-	return bp
-}
+// func (bp bsonParser) SetChanBufferLength(length uint) Parser {
+// 	bp.dataDelivery = make(chan *Telemetry, length)
+// 	return bp
+// }
 
 func NewBSONParser() bsonParser {
 
 	msgBufferSize := 10
 
 	return bsonParser{
-		bytesRead:    0,
-		delim:        0,
-		buflen:       1024,
-		msglen:       0,
-		dataDelivery: make(chan *bson.M, msgBufferSize),
+		bytesRead: 0,
+		delim:     0,
+		buflen:    1024,
+		msglen:    0,
+		parseType: reflect.TypeOf(TelemetryBuffer{}),
+		// dataDelivery: make(chan *bson.M, msgBufferSize),
+		dataDelivery: reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.TypeOf(&TelemetryBuffer{})), msgBufferSize),
+		// dataDelivery: make(chan *bson.M, msgBufferSize),
+
 	}
 }
 
-func (bp *bsonParser) Parse(reader io.Reader) {
+func (bp bsonParser) Parse(reader io.Reader) {
 	go bp.parse(reader)
 }
 
@@ -62,8 +82,41 @@ func (bp *bsonParser) Parse(reader io.Reader) {
 // 	bp.reader = reader
 // }
 
-func (bp *bsonParser) Next(mapBuffer *bson.M) error {
-	*mapBuffer = *(<-bp.dataDelivery)
+// func (bp bsonParser) Next(mapBuffer *TelemetryBuffer) error {
+
+// 	*mapBuffer = *(<-bp.dataDelivery)
+
+// 	return nil
+// }
+
+// Gets the next value read into the buffer
+func (bp bsonParser) Next(out interface{}) error {
+	// make sure that val is pointer to
+
+	in, _ := bp.dataDelivery.Recv()
+
+	// TYPE CHECKING NEEDED
+
+	reflect.ValueOf(out).Elem().Set(in.Elem())
+
+	return nil
+}
+
+// 	// switch s.(type) {
+// 	// case bp.parseType:
+// 	// 	v = s
+// 	// 	return
+// 	// }
+
+// }
+
+// func (bp bsonParser) SetMsgType(t Type) {
+// 	bp.parseType =
+// }
+
+func (bp bsonParser) GetDataChan(ch interface{}) error {
+	ch = bp.dataDelivery.Interface()
+
 	return nil
 }
 
@@ -78,12 +131,12 @@ func (bp *bsonParser) report() {
 func (bp *bsonParser) parse(reader io.Reader) {
 	// Make a buffer to hold incoming data.
 	buf := make([]byte, bp.buflen, bp.buflen+DOC_LENGTH_NUM_BYTES)
+	// sendbuf
 	// mapadap := make(map[string]interface{})
 
 	var token, lastValidByteIdx, partialMsgLength uint
 	var err error
 	var msgOverflowsBuffer, msgTooLong bool
-	fmt.Println("starting parse")
 
 	// Read the incoming connection into the buffer.
 	for {
@@ -91,6 +144,7 @@ func (bp *bsonParser) parse(reader io.Reader) {
 		bp.bytesRead, err = reader.Read(buf[bp.delim:])
 		if err != nil {
 			fmt.Println("Error reading: ", err.Error())
+			return
 		}
 
 		token = 0
@@ -116,19 +170,21 @@ func (bp *bsonParser) parse(reader io.Reader) {
 				break
 			}
 
-			// create new map pointer
-			doc_map := new(bson.M)
-
 			// read the bson document
-			err = bson.Unmarshal(buf[token:], doc_map)
+			v := reflect.New(bp.parseType)
+			err = bson.Unmarshal(buf[token:token+bp.msglen], v.Interface())
+			// msg := make([]byte, bp.msglen)
+
+			// copy(msg, buf[token:token+bp.msglen])
+
 			if err != nil {
 				fmt.Println("ERROR: ", err)
-				bp.report()
-				fmt.Println("   token:", token)
+				// bp.report()
 				return
 				// deal with it
 			} else {
-				bp.dataDelivery <- doc_map
+				fmt.Println(v)
+				bp.dataDelivery.Send(v) //reflect.ValueOf(v))
 			}
 
 			// set token to the start of the next document
@@ -143,7 +199,6 @@ func (bp *bsonParser) parse(reader io.Reader) {
 
 		// mark the delimiter
 		bp.delim = partialMsgLength
-
 	}
 
 }

@@ -1,7 +1,12 @@
 package server
 
 import (
+	// "bsonparser"
+	"fmt"
+	"net"
 	"net/http"
+	"os"
+	"sync"
 	// "fmt"
 	// "encoding/json"
 	// "io/ioutil"
@@ -18,29 +23,36 @@ import (
 type telemetryServer struct {
 	dispatch Dispatcher
 	hserver  HistoryServer
+	wg       sync.WaitGroup
+	close    chan bool
+	// parser   bsonparser.Parser
 
-	// 	conn_host string
-	// 	conn_port string
-	// 	conn_type string
+	conn_host string
+	conn_port string
+	conn_type string
 }
 
 type Server interface {
 }
 
-func NewServer(port int, datain chan Telemetry, dr chan DataRequest, h chan []Datum) {
+func NewServer(port int, datain chan Telemetry, dr chan DataRequest, h chan []Datum) telemetryServer {
+	// p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
+
 	s := telemetryServer{
-		dispatch: NewDispatch(datain),
+		// parser:   p,
+		dispatch: NewDispatch(p.GetDataChan()),
 		hserver:  HistoryServer{dr, h},
 	}
 
-	s.RunServer()
+	return s
 }
 
 func (s *telemetryServer) HandleWebsocket(ws *websocket.Conn) {
-	NewRealtimeServer(make(chan TelemetryCommand), s.dispatch.NewListener(), ws)
+	s.wg.Add(1)
+	NewRealtimeServer(make(chan TelemetryCommand), s.dispatch.NewListener(), ws, s.wg)
 }
 
-func (s *telemetryServer) RunServer() {
+func (s telemetryServer) RunServer() {
 	// define handlers
 	http.Handle("/", http.FileServer(http.Dir("../")))
 	http.Handle("/realtime/", websocket.Handler(s.HandleWebsocket))
@@ -51,33 +63,26 @@ func (s *telemetryServer) RunServer() {
 	}
 }
 
-// func (s *server) StreamData() {
-// 	l, err := net.Listen(conn_type, conn_host+":"+conn_port)
-// 	if err != nil {
-// 		fmt.Println("Error listening:", err.Error())
-// 		os.Exit(1)
-// 	}
+func (s *telemetryServer) StreamData() {
+	l, err := net.Listen(s.conn_type, s.conn_host+":"+s.conn_port)
+	if err != nil {
+		fmt.Println("Error listening:", err.Error())
+		os.Exit(1)
+	}
 
-// 	p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
-// 	// go func() {
-// 	// 	var mapbuf bson.M
-// 	// 	for {
-// 	// 		p.Next(&mapbuf)
-// 	// 		fmt.Println("read: ", mapbuf)
-// 	// 	}
-// 	// }()
+	// p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
 
-// 	// Close the listener when the application closes.
-// 	defer l.Close()
-// 	fmt.Println("Listening on " + CONN_HOST + ":" + CONN_PORT)
-// 	for {
-// 		// Listen for an incoming connection.
-// 		conn, err := l.Accept()
-// 		if err != nil {
-// 			fmt.Println("Error accepting: ", err.Error())
-// 			os.Exit(1)
-// 		}
-// 		// Handle connections in a new goroutine.
-// 		p.Parse(conn)
-// 	}
-// }
+	// Close the listener when the application closes.
+	defer l.Close()
+
+	for {
+		// Listen for an incoming connection.
+		conn, err := l.Accept()
+		if err != nil {
+			fmt.Println("Error accepting: ", err.Error())
+			os.Exit(1)
+		}
+		// Handle connections in a new goroutine.
+		p.Parse(conn)
+	}
+}

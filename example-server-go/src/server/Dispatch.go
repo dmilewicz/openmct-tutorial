@@ -5,7 +5,9 @@ import (
 )
 
 type Dispatcher struct {
-	TelemIn chan Telemetry
+	TelemIn chan map[string]interface{}
+
+	
 
 	telemetryIn broadcast.Broadcaster
 }
