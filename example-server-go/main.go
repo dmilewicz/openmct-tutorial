@@ -1,18 +1,14 @@
 package main
 
 import (
-
-	// "fmt"
-	// "encoding/json"
-	// "io/ioutil"
-	"craftsim"
 	"server"
 )
 
 func main() {
 
-	sim := craftsim.NewSim()
+	// sim := craftsim.NewSim()
+	hs := server.NewHistoryStore()
 
-	server.NewServer(8080, sim.RealtimeData, sim.HistoryRequest, sim.HistoryData).RunServer()
+	server.NewServer(8080, hs.HistoryRequest, hs.HistoryData, hs.DataIn).RunServer()
 
 }

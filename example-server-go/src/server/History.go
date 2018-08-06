@@ -6,23 +6,24 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type HistoryServer struct {
 	Request     chan DataRequest
-	HistoryData chan []Datum
+	HistoryData chan []TelemetryBuffer
 }
 
 type DataRequest struct {
 	Value string
-	Start int64
-	End   int64
+	Start time.Time
+	End   time.Time
 }
 
 func NewHistoryServer() HistoryServer {
 	return HistoryServer{
 		Request:     make(chan DataRequest),
-		HistoryData: make(chan []Datum),
+		HistoryData: make(chan []TelemetryBuffer),
 	}
 }
 
@@ -30,13 +31,13 @@ func extractRequest(u *url.URL) DataRequest {
 	q := u.Query()
 
 	// TODO: Decide to keep timestamp as int or float?
-	start, _ := strconv.ParseFloat(q.Get("start"), 64)
-	end, _ := strconv.ParseFloat(q.Get("end"), 64)
+	start, _ := strconv.ParseInt(q.Get("start"), 10, 64)
+	end, _ := strconv.ParseInt(q.Get("end"), 10, 64)
 
 	dr := DataRequest{
 		strings.TrimPrefix(u.Path, "/history/"),
-		int64(start),
-		int64(end)}
+		time.Unix(start/1000, 0),
+		time.Unix(end/1000, 0)}
 
 	return dr
 }

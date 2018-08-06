@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 )
 
 const (
@@ -12,6 +13,17 @@ const (
 	CONN_PORT = "12345"
 	CONN_TYPE = "tcp"
 )
+
+type TelemetryBuffer struct {
+	Name      string      `json:"name" bson:"name"`
+	Key       string      `json:"key" bson:"key"`
+	Flags     int64       `json:"flags,omitempty" bson:"flags,omitempty"`
+	Timestamp time.Time   `json:"timestamp" bson:"timestamp"`
+	Raw_Type  int64       `json:"raw_type" bson:"raw_type"`
+	Raw_Value interface{} `json:"raw_value" bson:"raw_value"`
+	Eng_Type  int64       `json:"eng_type,omitempty" bson:"eng_type,omitempty"`
+	Eng_Val   interface{} `json:"eng_val,omitempty" bson:"eng_val,omitempty"`
+}
 
 func main() {
 	// Listen for incoming connections.
@@ -21,25 +33,37 @@ func main() {
 		os.Exit(1)
 	}
 
-	p := bsonparser.NewBSONParser()
+	p := bsonparser.InitBuild().BufLen(1024).ParseTo(TelemetryBuffer{}).Build()
 	go func() {
 		// var mapbuf bsonparser.TelemetryBuffer
 		i := 0
 
-		var ch chan bsonparser.TelemetryBuffer
+		ch := make(chan TelemetryBuffer)
 
-		p.GetDataChan(ch)
+		go func() {
+			for {
+				var t TelemetryBuffer
+				err := p.Next(&t)
 
-		for {
-			var v bsonparser.TelemetryBuffer
-			p.Next(&v)
+				if err != nil {
+					fmt.Println("errrrrr: ", err)
+					return
+				} else {
+					ch <- t
+				}
+			}
+		}()
 
-			// S := <-ch
+		// p.GetDataChan(&ch)
+		// var v TelemetryBuffer
+		// p.Next(&v)
 
-			// if i%50 == 0 {
-			fmt.Println("read: ", v)
+		for v := range ch {
+			if i%50 == 0 {
+				fmt.Println("read: ", v)
 
-			// }
+			}
+
 			i++
 		}
 	}()

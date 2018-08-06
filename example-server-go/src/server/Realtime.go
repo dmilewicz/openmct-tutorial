@@ -93,7 +93,7 @@ func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 
 // Send data through the websocket when available. Process the subscription commands.
 func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
-	var d Telemetry
+	var d TelemetryBuffer
 	var i interface{}
 	var rtc TelemetryCommand
 	var err error
@@ -101,18 +101,23 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 	for {
 		select {
 		case i = <-rs.dataIn.Listen():
-			d = i.(Telemetry)
-			for key := range rs.Subscribed {
+			d = i.(TelemetryBuffer)
 
-				// Telemetry will be broken now because 
-				err = c.Send(ws, d.Datum(key))
-
-				// closing works now -- need a universal close
-				if err != nil {
-					fmt.Println(err)
-					rs.close <- true
-				}
+			if _, ok := rs.Subscribed[d.Name]; ok {
+				err = c.Send(ws, d)
 			}
+
+			// for key := range rs.Subscribed {
+
+			// 	// Telemetry will be broken now because
+			// 	err = c.Send(ws, d.Datum(key))
+
+			// 	// closing works now -- need a universal close
+			if err != nil {
+				fmt.Println(err)
+				rs.close <- true
+			}
+
 		case rtc = <-rs.cmdChannel:
 			rs.processCommand(rtc)
 		case <-rs.close:

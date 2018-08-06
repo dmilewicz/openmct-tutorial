@@ -2,14 +2,15 @@ package server
 
 import (
 	"broadcast"
+	"fmt"
 )
 
 type Dispatcher struct {
-	TelemIn chan map[string]interface{}
-
-	
+	TelemIn chan TelemetryBuffer
 
 	telemetryIn broadcast.Broadcaster
+
+	hData chan TelemetryBuffer
 }
 
 // type Listener interface {
@@ -34,10 +35,13 @@ func (l *Listener) Listen() <-chan interface{} {
 	return l.dataIn
 }
 
-func NewDispatch(t chan Telemetry) Dispatcher {
+func NewDispatch(t chan TelemetryBuffer, hData chan TelemetryBuffer) Dispatcher {
 	arbitraryBufLen := 10
 
-	d := Dispatcher{t, broadcast.NewBroadcaster(arbitraryBufLen)}
+	d := Dispatcher{t, broadcast.NewBroadcaster(arbitraryBufLen), hData}
+
+	fmt.Println("hiya! t: ", <-t)
+
 	go d.run()
 
 	return d
@@ -52,9 +56,11 @@ func (d *Dispatcher) NewListener() Listener {
 }
 
 func (d *Dispatcher) run() {
-	var telem Telemetry
+	var telem TelemetryBuffer
 
 	for telem = range d.TelemIn {
+		d.hData <- telem
+		// fmt.Println(telem)
 		d.telemetryIn.Send(telem)
 	}
 }
