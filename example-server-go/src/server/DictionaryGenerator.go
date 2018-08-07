@@ -1,6 +1,12 @@
 package server
 
-import "time"
+import (
+	"encoding/binary"
+	"fmt"
+	"time"
+
+	"labix.org/v2/mgo/bson"
+)
 
 type point struct {
 }
@@ -13,12 +19,32 @@ type point struct {
 // type Telemetry struct {
 // 	Values []value `json:"values"`
 // }
+
+type OpenMCTTime time.Time
+
+func (t OpenMCTTime) MarshalJSON() ([]byte, error) {
+	// fmt.Println(time.Time(t))
+	// return time.Time(t).MarshalJSON()
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(time.Time(t).UnixNano()/int64(time.Millisecond)))
+	// return b, nil
+	return []byte(fmt.Sprintf("%d", time.Time(t).UnixNano()/int64(time.Millisecond))), nil
+
+}
+
+func (t *OpenMCTTime) SetBSON(b bson.Raw) error {
+	bt := new(time.Time)
+	err := b.Unmarshal(&bt)
+	*t = OpenMCTTime(*bt)
+	return err
+}
+
 type TelemetryBuffer struct {
 	Name      string      `json:"name" bson:"name"`
-	Key       string      `json:"key" bson:"key"`
+	Key       string      `json:"-" bson:"key"`
 	Flags     int64       `json:"flags,omitempty" bson:"flags,omitempty"`
-	Timestamp time.Time   `json:"timestamp" bson:"timestamp"`
-	Raw_Type  int64       `json:"raw_type" bson:"raw_type"`
+	Timestamp OpenMCTTime `json:"timestamp" bson:"timestamp"`
+	Raw_Type  int64       `json:"-" bson:"raw_type"`
 	Raw_Value interface{} `json:"raw_value" bson:"raw_value"`
 	Eng_Type  int64       `json:"eng_type,omitempty" bson:"eng_type,omitempty"`
 	Eng_Val   interface{} `json:"eng_val,omitempty" bson:"eng_val,omitempty"`

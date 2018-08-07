@@ -64,6 +64,8 @@ func NewServer(port int, dr chan DataRequest, h chan []TelemetryBuffer, hs chan 
 		hserver:  HistoryServer{dr, h},
 	}
 
+	fmt.Println("end newserver")
+
 	return s
 }
 
@@ -73,8 +75,10 @@ func (s *telemetryServer) HandleWebsocket(ws *websocket.Conn) {
 }
 
 func (s telemetryServer) RunServer() {
+	fmt.Println("runserver")
+
 	// define handlers
-	http.Handle("/", http.FileServer(http.Dir("../")))
+	http.Handle("/", http.FileServer(http.Dir("static")))
 	http.Handle("/realtime/", websocket.Handler(s.HandleWebsocket))
 	http.HandleFunc("/history/", s.hserver.RunServer)
 

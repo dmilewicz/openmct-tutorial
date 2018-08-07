@@ -2,7 +2,6 @@ package server
 
 import (
 	"broadcast"
-	"fmt"
 )
 
 type Dispatcher struct {
@@ -39,8 +38,6 @@ func NewDispatch(t chan TelemetryBuffer, hData chan TelemetryBuffer) Dispatcher 
 	arbitraryBufLen := 10
 
 	d := Dispatcher{t, broadcast.NewBroadcaster(arbitraryBufLen), hData}
-
-	fmt.Println("hiya! t: ", <-t)
 
 	go d.run()
 

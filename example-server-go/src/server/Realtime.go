@@ -104,6 +104,7 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 			d = i.(TelemetryBuffer)
 
 			if _, ok := rs.Subscribed[d.Name]; ok {
+				fmt.Println("Sending: ", d)
 				err = c.Send(ws, d)
 			}
 

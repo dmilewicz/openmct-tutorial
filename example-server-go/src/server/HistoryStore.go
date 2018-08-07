@@ -1,5 +1,10 @@
 package server
 
+import (
+	"fmt"
+	"time"
+)
+
 type HistoryStore struct {
 	DataIn         chan TelemetryBuffer
 	HistoryRequest chan DataRequest
@@ -43,19 +48,13 @@ func (h *HistoryStore) getHistory(dr DataRequest) []TelemetryBuffer {
 
 	for _, v := range h.history[dr.Value] {
 
-		if v.Timestamp.After(dr.End) {
-			break
-		}
-
-		// fmt.Println(dr.Start, " vs ", v.Timestamp)
-
-		if v.Timestamp.After(dr.Start) {
+		if time.Time(v.Timestamp).After(dr.Start) && time.Time(v.Timestamp).Before(dr.End) {
 			telem = append(telem, v)
 		}
 
 	}
 
-	// fmt.Println(telem)
+	fmt.Println(telem)
 
 	return telem
 }
