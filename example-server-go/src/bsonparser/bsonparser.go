@@ -119,9 +119,6 @@ func (bp *bsonParser) parse(reader io.Reader) {
 			// read the bson document
 			v := reflect.New(bp.parseType)
 			err = bson.Unmarshal(buf[token:token+bp.msglen], v.Interface())
-			// msg := make([]byte, bp.msglen)
-
-			// copy(msg, buf[token:token+bp.msglen])
 
 			if err != nil {
 				fmt.Println("ERROR: ", err)

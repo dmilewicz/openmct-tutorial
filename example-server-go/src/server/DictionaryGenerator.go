@@ -6,9 +6,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"time"
+	"strings"
 
 	"labix.org/v2/mgo/bson"
 )
+
+const (
+	PACKAGE_INDEX = 0
+	POINT_INDEX   = 1
+)
+
 
 // ============================================================================
 // Data Structures
@@ -17,7 +24,8 @@ import (
 type DictionaryGenerator struct {
 	dataIn <-chan TelemetryBuffer
 
-	packages   map[string]Telemetry
+	points   map[string]Telemetry
+	packages map[string][]string
 	dictString string
 }
 
@@ -60,6 +68,8 @@ type Telemetry struct {
 }
 
 type Package struct {
+	Name string
+	Points []string
 }
 
 // ============================================================================
@@ -69,10 +79,24 @@ type Package struct {
 func NewDictionaryGenerator(dataIn <-chan TelemetryBuffer) DictionaryGenerator {
 	d := DictionaryGenerator{
 		dataIn:   dataIn,
-		packages: make(map[string]Telemetry),
+		points: make(map[string]Telemetry),
+		packages: make(map[string][]string), 
 	}
 
-	// read in the points file?
+	pointcontent, err := ioutil.ReadFile("points.json")
+	if err == nil {
+		json.Unmarshal(pointcontent, &d.points)
+		fmt.Println(d.points)
+	}
+	
+	packcontent, err := ioutil.ReadFile("packages.json")
+	if err == nil {
+		err = json.Unmarshal(packcontent, &d.packages)
+		fmt.Println(d.packages)
+	}
+
+	d.Save()
+
 
 	go d.runGenerator()
 
@@ -86,30 +110,32 @@ func (dg *DictionaryGenerator) runGenerator() {
 }
 
 func (dg *DictionaryGenerator) writePoint(point TelemetryBuffer) {
-	if _, ok := dg.packages[point.Name]; !ok {
+	if _, ok := dg.points[point.Name]; !ok {
 		pointMetaData := UnmarshalTelemetry(point)
 
-		dg.packages[point.Name] = pointMetaData
+		dg.points[point.Name] = pointMetaData
+
+		packageData := strings.Split(point.Name, ".")
+
+		dg.packages[packageData[PACKAGE_INDEX]] = append(dg.packages[packageData[PACKAGE_INDEX]], point.Name)
 
 		dg.Save()
-
 	}
-
 }
 
 func (dg *DictionaryGenerator) Save() {
-	s, err := json.Marshal(dg.packages)
-	// s, err := json.MarshalIndent(dg.packages, "", "\t")
+	s, err := json.Marshal(dg.points)
+	v, err := json.Marshal(dg.packages)
 
 	if err != nil {
 		panic("ERROR")
 	}
 
+	ioutil.WriteFile("packages.json", v, 0644) // TODO: what is the black magic?
 	ioutil.WriteFile("points.json", s, 0644) // TODO: what is the black magic?
 }
 
 func (t *Telemetry) String() string {
-	// s, err := json.MarshalIndent(*t, "", "\t")
 	s, err := json.Marshal(*t)
 
 	if err != nil {
