@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -51,10 +50,6 @@ func (h *HistoryStore) getHistory(dr DataRequest) []TelemetryBuffer {
 		if time.Time(v.Timestamp).After(dr.Start) && time.Time(v.Timestamp).Before(dr.End) {
 			telem = append(telem, v)
 		}
-
 	}
-
-	fmt.Println(telem)
-
 	return telem
 }

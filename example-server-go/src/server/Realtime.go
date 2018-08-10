@@ -19,7 +19,7 @@ const (
 type RealtimeServer struct {
 	// TelemIn    <-chan Telemetry
 	RequestOut chan<- TelemetryCommand
-	Subscribed map[string]bool
+	subscribed map[string]bool
 	cmdChannel chan TelemetryCommand
 	dataIn     Listener
 	ws         *websocket.Conn
@@ -38,7 +38,7 @@ func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn, 
 	// configure server
 	rs := RealtimeServer{
 		RequestOut: r,
-		Subscribed: make(map[string]bool),
+		subscribed: make(map[string]bool),
 		cmdChannel: make(chan TelemetryCommand),
 		dataIn:     l,
 		ws:         ws,
@@ -85,9 +85,9 @@ func (rs *RealtimeServer) Recv(c websocket.Codec, ws *websocket.Conn) {
 func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 	switch tc.Cmd {
 	case Subscribe:
-		rs.Subscribed[tc.ID] = true
+		rs.subscribed[tc.ID] = true
 	case Unsubscribe:
-		delete(rs.Subscribed, tc.ID)
+		delete(rs.subscribed, tc.ID)
 	}
 }
 
@@ -103,17 +103,11 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 		case i = <-rs.dataIn.Listen():
 			d = i.(TelemetryBuffer)
 
-			if _, ok := rs.Subscribed[d.Name]; ok {
+			if _, ok := rs.subscribed[d.Name]; ok {
 				fmt.Println("Sending: ", d)
 				err = c.Send(ws, d)
 			}
 
-			// for key := range rs.Subscribed {
-
-			// 	// Telemetry will be broken now because
-			// 	err = c.Send(ws, d.Datum(key))
-
-			// 	// closing works now -- need a universal close
 			if err != nil {
 				fmt.Println(err)
 				rs.close <- true

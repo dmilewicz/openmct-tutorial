@@ -9,7 +9,8 @@ type Dispatcher struct {
 
 	telemetryIn broadcast.Broadcaster
 
-	hData chan TelemetryBuffer
+	hData    chan<- TelemetryBuffer
+	dictData chan<- TelemetryBuffer
 }
 
 // type Listener interface {
@@ -34,10 +35,10 @@ func (l *Listener) Listen() <-chan interface{} {
 	return l.dataIn
 }
 
-func NewDispatch(t chan TelemetryBuffer, hData chan TelemetryBuffer) Dispatcher {
+func NewDispatch(t chan TelemetryBuffer, hData chan TelemetryBuffer, dictData chan TelemetryBuffer) Dispatcher {
 	arbitraryBufLen := 10
 
-	d := Dispatcher{t, broadcast.NewBroadcaster(arbitraryBufLen), hData}
+	d := Dispatcher{t, broadcast.NewBroadcaster(arbitraryBufLen), hData, dictData}
 
 	go d.run()
 
@@ -57,6 +58,7 @@ func (d *Dispatcher) run() {
 
 	for telem = range d.TelemIn {
 		d.hData <- telem
+		d.dictData <- telem
 		// fmt.Println(telem)
 		d.telemetryIn.Send(telem)
 	}

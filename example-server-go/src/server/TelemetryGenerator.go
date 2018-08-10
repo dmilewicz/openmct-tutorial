@@ -58,7 +58,7 @@ package server
 
 // }
 
-// func BuildValues() {
+// // func BuildValues() {
 
 // }
 
@@ -78,41 +78,41 @@ package server
 // 	Eng_Val   interface{} // `json:"eng_val,omitempty" bson:"eng_val,omitempty"`
 // }
 
-type Telemetry struct {
-	Name   string `json:"name"`
-	Key    string `json:"key"`
-	Values []Val  `json:"values"`
-	// []struct {
-	// 	Key     string `json:"key" bson:"key"`
-	// 	Name    string `json:"name" bson:"name"`
-	// 	Units   string `json:"units,omitempty" bson:"units,omitempty"`
-	// 	Format  string `json:"format,omitempty" bson:"format,omitempty"`
-	// 	Min     int    `json:"min,omitempty" bson:"min,omitempty"`
-	// 	Max     int    `json:"max,omitempty" bson:"max,omitempty"`
-	// 	RawType int32  `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
-	// 	Hints   hint   `json:"hints" bson:"hints"`
-	// 	Source  string `json:"source,omitempty"`
-	// } `json:"values"`
-}
+// type Telemetry struct {
+// 	Name   string `json:"name"`
+// 	Key    string `json:"key"`
+// 	Values []Val  `json:"values"`
+// 	// []struct {
+// 	// 	Key     string `json:"key" bson:"key"`
+// 	// 	Name    string `json:"name" bson:"name"`
+// 	// 	Units   string `json:"units,omitempty" bson:"units,omitempty"`
+// 	// 	Format  string `json:"format,omitempty" bson:"format,omitempty"`
+// 	// 	Min     int    `json:"min,omitempty" bson:"min,omitempty"`
+// 	// 	Max     int    `json:"max,omitempty" bson:"max,omitempty"`
+// 	// 	RawType int32  `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
+// 	// 	Hints   hint   `json:"hints" bson:"hints"`
+// 	// 	Source  string `json:"source,omitempty"`
+// 	// } `json:"values"`
+// }
 
-type Val struct {
-	Key    string `json:"key" bson:"key"`
-	Name   string `json:"name" bson:"name"`
-	Units  string `json:"units,omitempty" bson:"units,omitempty"`
-	Format string `json:"format,omitempty" bson:"format,omitempty"`
-	// Min     int    `json:"min,omitempty" bson:"min,omitempty"`
-	// Max     int    `json:"max,omitempty" bson:"max,omitempty"`
-	EngType int32 `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
+// type Val struct {
+// 	Key    string `json:"key" bson:"key"`
+// 	Name   string `json:"name" bson:"name"`
+// 	Units  string `json:"units,omitempty" bson:"units,omitempty"`
+// 	Format string `json:"format,omitempty" bson:"format,omitempty"`
+// 	// Min     int    `json:"min,omitempty" bson:"min,omitempty"`
+// 	// Max     int    `json:"max,omitempty" bson:"max,omitempty"`
+// 	EngType int32 `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
 
-	RawType int32  `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
-	Hints   hint   `json:"hints" bson:"hints"`
-	Source  string `json:"source,omitempty"`
-}
+// 	RawType int32  `json:"raw_type,omitempty" bson:"raw_type,omitempty"`
+// 	Hints   hint   `json:"hints" bson:"hints"`
+// 	Source  string `json:"source,omitempty"`
+// }
 
-type hint struct {
-	Range  int `json:"range,omitempty" bson:"range,omitempty"`
-	Domain int `json:"domain,omitempty" bson:"domain,omitempty"`
-}
+// type hint struct {
+// 	Range  int `json:"range,omitempty" bson:"range,omitempty"`
+// 	Domain int `json:"domain,omitempty" bson:"domain,omitempty"`
+// }
 
 // func (t Telemetry) GetIdx(key string) int {
 // 	return t.idx[key]

@@ -22,6 +22,7 @@ import (
 type telemetryServer struct {
 	dispatch Dispatcher
 	hserver  HistoryServer
+	dictgen  DictionaryGenerator
 	parser   bsonparser.Parser
 	wg       sync.WaitGroup
 	close    chan bool
@@ -36,12 +37,11 @@ type Server interface {
 }
 
 func NewServer(port int, dr chan DataRequest, h chan []TelemetryBuffer, hs chan TelemetryBuffer) telemetryServer {
-	// p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
-
 	p := bsonparser.InitBuild().BufLen(1024).ParseTo(TelemetryBuffer{}).Build()
 
 	dataChan := make(chan TelemetryBuffer)
 
+	// Data Ingestion
 	go func() {
 		for {
 			var t TelemetryBuffer
@@ -58,13 +58,14 @@ func NewServer(port int, dr chan DataRequest, h chan []TelemetryBuffer, hs chan 
 
 	go ReadData(p)
 
+	dictChan := make(chan TelemetryBuffer)
+
 	s := telemetryServer{
 		parser:   p,
-		dispatch: NewDispatch(dataChan, hs),
+		dispatch: NewDispatch(dataChan, hs, dictChan),
+		dictgen:  NewDictionaryGenerator(dictChan),
 		hserver:  HistoryServer{dr, h},
 	}
-
-	fmt.Println("end newserver")
 
 	return s
 }
@@ -75,7 +76,6 @@ func (s *telemetryServer) HandleWebsocket(ws *websocket.Conn) {
 }
 
 func (s telemetryServer) RunServer() {
-	fmt.Println("runserver")
 
 	// define handlers
 	http.Handle("/", http.FileServer(http.Dir("static")))

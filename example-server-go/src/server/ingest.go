@@ -38,6 +38,8 @@ func ReadData(p bsonparser.Parser) {
 			os.Exit(1)
 		}
 
+		fmt.Println("Connection established.")
+
 		p.Parse(conn)
 	}
 }

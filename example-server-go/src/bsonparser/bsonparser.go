@@ -15,46 +15,17 @@ const (
 
 type Parser interface {
 	Parse(io.Reader)
-
-	// setters for building
-	// SetByteBufferLength(length uint) Parser
-	// SetChanBufferLength(length uint) Parser
-	// GetDataChan(ch interface{}) error
 	Next(interface{}) error
-
-	// Close()
 }
 
 type bsonParser struct {
-	bytesRead int
-	delim     uint
-	buflen    uint
-	msglen    uint
-	parseType reflect.Type
-
-	// dataDelivery chan *bson.M
+	bytesRead    int
+	delim        uint
+	buflen       uint
+	msglen       uint
+	parseType    reflect.Type
 	dataDelivery reflect.Value //*TelemetryBuffer
 }
-
-// func NewBSONParser() bsonParser {
-
-// 	msgBufferSize := 10
-
-// 	return bsonParser{
-// 		bytesRead: 0,
-// 		delim:     0,
-// 		buflen:    1024,
-// 		msglen:    0,
-// 		parseType: reflect.TypeOf(TelemetryBuffer{}),
-// 		// parseType: reflect.TypeOf(make(map[string]interface{})),
-// 		// dataDelivery: make(chan *bson.M, msgBufferSize),
-// 		dataDelivery: reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.TypeOf(&TelemetryBuffer{})), msgBufferSize),
-// 		// dataDelivery: reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.TypeOf(make(map[string]interface{}))), msgBufferSize),
-
-// 		// dataDelivery: make(chan *bson.M, msgBufferSize),
-
-// 	}
-// }
 
 type ParserBuilder interface {
 	BufLen(uint) ParserBuilder
@@ -97,27 +68,17 @@ func (bp bsonParser) Parse(reader io.Reader) {
 // Gets the next value read into the buffer
 func (bp bsonParser) Next(out interface{}) error {
 	// make sure that val is pointer to
-
 	in, _ := bp.dataDelivery.Recv()
 
 	// TYPE CHECKING NEEDED
-
 	reflect.ValueOf(out).Elem().Set(in.Elem())
 
 	return nil
 }
 
-// Placeholder-- how to make chan with variable return type?
-// func (bp bsonParser) GetDataChan(ch interface{}) chan interface{} {
-
-// 	return bp.dataDelivery
-// }
-
 func (bp *bsonParser) parse(reader io.Reader) {
 	// Make a buffer to hold incoming data.
 	buf := make([]byte, bp.buflen, bp.buflen+DOC_LENGTH_NUM_BYTES)
-	// sendbuf
-	// mapadap := make(map[string]interface{})
 
 	var token, lastValidByteIdx, partialMsgLength uint
 	var err error
