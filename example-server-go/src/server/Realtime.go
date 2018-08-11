@@ -17,7 +17,6 @@ const (
 )
 
 type RealtimeServer struct {
-	// TelemIn    <-chan Telemetry
 	RequestOut chan<- TelemetryCommand
 	subscribed map[string]bool
 	cmdChannel chan TelemetryCommand
@@ -93,7 +92,7 @@ func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 
 // Send data through the websocket when available. Process the subscription commands.
 func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
-	var d TelemetryBuffer
+	var d Telemetry
 	var i interface{}
 	var rtc TelemetryCommand
 	var err error
@@ -101,10 +100,10 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 	for {
 		select {
 		case i = <-rs.dataIn.Listen():
-			d = i.(TelemetryBuffer)
+			d = i.(Telemetry)
 
 			if _, ok := rs.subscribed[d.Name]; ok {
-				fmt.Println("Sending: ", d)
+				// fmt.Println("Sending: ", d)
 				err = c.Send(ws, d)
 			}
 
@@ -116,7 +115,6 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 		case rtc = <-rs.cmdChannel:
 			rs.processCommand(rtc)
 		case <-rs.close:
-			fmt.Println("closing here")
 			rs.wg.Done()
 			return
 		}

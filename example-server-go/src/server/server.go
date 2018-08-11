@@ -13,12 +13,6 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// const (
-// 	CONN_HOST = "localhost"
-// 	CONN_PORT = "12345"
-// 	CONN_TYPE = "tcp"
-// )
-
 type telemetryServer struct {
 	dispatch Dispatcher
 	hserver  HistoryServer
@@ -26,7 +20,6 @@ type telemetryServer struct {
 	parser   bsonparser.Parser
 	wg       sync.WaitGroup
 	close    chan bool
-	// parser   bsonparser.Parser
 
 	conn_host string
 	conn_port string
@@ -36,15 +29,15 @@ type telemetryServer struct {
 type Server interface {
 }
 
-func NewServer(port int, dr chan DataRequest, h chan []TelemetryBuffer, hs chan TelemetryBuffer) telemetryServer {
-	p := bsonparser.InitBuild().BufLen(1024).ParseTo(TelemetryBuffer{}).Build()
+func NewServer(port int, dr chan DataRequest, h chan []Telemetry, hs chan Telemetry) telemetryServer {
+	p := bsonparser.InitBuild().BufLen(1024).ParseTo(Telemetry{}).Build()
 
-	dataChan := make(chan TelemetryBuffer)
+	dataChan := make(chan Telemetry)
 
 	// Data Ingestion
 	go func() {
 		for {
-			var t TelemetryBuffer
+			var t Telemetry
 			err := p.Next(&t)
 
 			if err != nil {
@@ -58,7 +51,7 @@ func NewServer(port int, dr chan DataRequest, h chan []TelemetryBuffer, hs chan 
 
 	go ReadData(p)
 
-	dictChan := make(chan TelemetryBuffer)
+	dictChan := make(chan Telemetry)
 
 	s := telemetryServer{
 		parser:   p,
@@ -86,27 +79,3 @@ func (s telemetryServer) RunServer() {
 		panic(err)
 	}
 }
-
-// func (s *telemetryServer) StreamData() {
-// 	l, err := net.Listen(s.conn_type, s.conn_host+":"+s.conn_port)
-// 	if err != nil {
-// 		fmt.Println("Error listening:", err.Error())
-// 		os.Exit(1)
-// 	}
-
-// 	// p := bsonparser.NewBSONParser().SetByteBufferLength(1024).SetChanBufferLength(10)
-
-// 	// Close the listener when the application closes.
-// 	defer l.Close()
-
-// 	for {
-// 		// Listen for an incoming connection.
-// 		conn, err := l.Accept()
-// 		if err != nil {
-// 			fmt.Println("Error accepting: ", err.Error())
-// 			os.Exit(1)
-// 		}
-// 		// Handle connections in a new goroutine.
-// 		p.Parse(conn)
-// 	}
-// }

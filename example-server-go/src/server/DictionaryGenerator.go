@@ -5,33 +5,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"time"
 	"strings"
+	"time"
 
 	"labix.org/v2/mgo/bson"
 )
 
 const (
-	PACKAGE_INDEX = 0
-	POINT_INDEX   = 1
+	GROUP_NAME = 0
+	POINT_NAME = 1
 )
-
 
 // ============================================================================
 // Data Structures
 // ============================================================================
 
 type DictionaryGenerator struct {
-	dataIn <-chan TelemetryBuffer
+	dataIn <-chan Telemetry
 
-	points   map[string]Telemetry
-	packages map[string][]string
+	points     map[string]telemetryMetaData
+	packages   map[string]*packetgroup
 	dictString string
 }
 
 type OpenMCTTime time.Time
 
-type TelemetryBuffer struct {
+type Telemetry struct {
 	Name      string      `json:"name" bson:"name"`
 	Key       string      `json:"-" bson:"key"`
 	Flags     int64       `json:"flags,omitempty" bson:"flags,omitempty"`
@@ -42,7 +41,7 @@ type TelemetryBuffer struct {
 	Eng_Val   interface{} `json:"eng_val,omitempty" bson:"eng_val,omitempty"`
 }
 
-type Val struct {
+type value struct {
 	Key      string `json:"key" bson:"key"`
 	Name     string `json:"name" bson:"name"`
 	Units    string `json:"units,omitempty" bson:"units,omitempty"`
@@ -60,43 +59,40 @@ type hint struct {
 	Domain int `json:"domain,omitempty" bson:"domain,omitempty"`
 }
 
-type Telemetry struct {
-	Name   string `json:"name"`
-	Key    string `json:"key"`
-	ID     string `json:"id"`
-	Values []Val  `json:"values"`
+type telemetryMetaData struct {
+	Name   string  `json:"name"`
+	Key    string  `json:"key"`
+	ID     string  `json:"id"`
+	Values []value `json:"values"`
 }
 
-type Package struct {
-	Name string
-	Points []string
+type packetgroup struct {
+	Name   string   `json:"name"`
+	Points []string `json:"points"`
 }
 
 // ============================================================================
 // Member Functions
 // ============================================================================
 
-func NewDictionaryGenerator(dataIn <-chan TelemetryBuffer) DictionaryGenerator {
+func NewDictionaryGenerator(dataIn <-chan Telemetry) DictionaryGenerator {
 	d := DictionaryGenerator{
 		dataIn:   dataIn,
-		points: make(map[string]Telemetry),
-		packages: make(map[string][]string), 
+		points:   make(map[string]telemetryMetaData),
+		packages: make(map[string]*packetgroup),
 	}
 
 	pointcontent, err := ioutil.ReadFile("points.json")
 	if err == nil {
 		json.Unmarshal(pointcontent, &d.points)
-		fmt.Println(d.points)
 	}
-	
+
 	packcontent, err := ioutil.ReadFile("packages.json")
 	if err == nil {
 		err = json.Unmarshal(packcontent, &d.packages)
-		fmt.Println(d.packages)
 	}
 
 	d.Save()
-
 
 	go d.runGenerator()
 
@@ -109,7 +105,7 @@ func (dg *DictionaryGenerator) runGenerator() {
 	}
 }
 
-func (dg *DictionaryGenerator) writePoint(point TelemetryBuffer) {
+func (dg *DictionaryGenerator) writePoint(point Telemetry) {
 	if _, ok := dg.points[point.Name]; !ok {
 		pointMetaData := UnmarshalTelemetry(point)
 
@@ -117,7 +113,13 @@ func (dg *DictionaryGenerator) writePoint(point TelemetryBuffer) {
 
 		packageData := strings.Split(point.Name, ".")
 
-		dg.packages[packageData[PACKAGE_INDEX]] = append(dg.packages[packageData[PACKAGE_INDEX]], point.Name)
+		if _, ok := dg.packages[packageData[GROUP_NAME]]; !ok {
+			dg.packages[packageData[GROUP_NAME]] = new(packetgroup)
+			dg.packages[packageData[GROUP_NAME]].Name = packageData[GROUP_NAME]
+		}
+
+		nameSlice := dg.packages[packageData[GROUP_NAME]].Points
+		dg.packages[packageData[GROUP_NAME]].Points = append(nameSlice, point.Name)
 
 		dg.Save()
 	}
@@ -131,11 +133,11 @@ func (dg *DictionaryGenerator) Save() {
 		panic("ERROR")
 	}
 
-	ioutil.WriteFile("packages.json", v, 0644) // TODO: what is the black magic?
-	ioutil.WriteFile("points.json", s, 0644) // TODO: what is the black magic?
+	ioutil.WriteFile("packets.json", v, 0644)    // TODO: what is the black magic?
+	ioutil.WriteFile("dictionary.json", s, 0644) // TODO: what is the black magic?
 }
 
-func (t *Telemetry) String() string {
+func (t *telemetryMetaData) String() string {
 	s, err := json.Marshal(*t)
 
 	if err != nil {
@@ -165,10 +167,10 @@ func (t *OpenMCTTime) SetBSON(b bson.Raw) error {
 	return err
 }
 
-func UnmarshalTelemetry(tBuf TelemetryBuffer) Telemetry {
-	var vals []Val
+func UnmarshalTelemetry(tBuf Telemetry) telemetryMetaData {
+	var vals []value
 
-	vals = append(vals, Val{
+	vals = append(vals, value{
 		Key:    "utc",
 		Source: "timestamp",
 		Name:   "Timestamp",
@@ -177,7 +179,7 @@ func UnmarshalTelemetry(tBuf TelemetryBuffer) Telemetry {
 			Domain: 1,
 		},
 	},
-		Val{
+		value{
 			Key:      "raw_value",
 			Name:     "Raw Value",
 			Raw_Type: tBuf.Raw_Type,
@@ -187,7 +189,7 @@ func UnmarshalTelemetry(tBuf TelemetryBuffer) Telemetry {
 		})
 
 	if tBuf.Eng_Val != nil {
-		vals = append(vals, Val{
+		vals = append(vals, value{
 			Key:      "eng_val",
 			Name:     "Engineering Value",
 			Eng_Type: tBuf.Eng_Type,
@@ -197,7 +199,7 @@ func UnmarshalTelemetry(tBuf TelemetryBuffer) Telemetry {
 		})
 	}
 
-	return Telemetry{
+	return telemetryMetaData{
 		Name:   tBuf.Name,
 		Key:    tBuf.Name,
 		ID:     tBuf.Name,
