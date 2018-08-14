@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"time"
 
 	"labix.org/v2/mgo/bson"
 )
@@ -23,6 +24,7 @@ type bsonParser struct {
 	delim        uint
 	buflen       uint
 	msglen       uint
+	counter      Counter
 	parseType    reflect.Type
 	dataDelivery reflect.Value //*TelemetryBuffer
 }
@@ -34,7 +36,7 @@ type ParserBuilder interface {
 }
 
 func InitBuild() ParserBuilder {
-	return &bsonParser{}
+	return &bsonParser{counter: Counter{title: "parser", frameSeconds: 3}}
 }
 
 func (bp *bsonParser) BufLen(buflen uint) ParserBuilder {
@@ -84,6 +86,8 @@ func (bp *bsonParser) parse(reader io.Reader) {
 	var err error
 	var msgOverflowsBuffer, msgTooLong bool
 
+	go bp.counter.run()
+
 	// Read the incoming connection into the buffer.
 	for {
 		// read into buffer starting at the next
@@ -125,6 +129,7 @@ func (bp *bsonParser) parse(reader io.Reader) {
 				return
 				// deal with it
 			} else {
+				bp.counter.Add(1)
 				bp.dataDelivery.Send(v)
 			}
 
@@ -142,4 +147,34 @@ func (bp *bsonParser) parse(reader io.Reader) {
 		bp.delim = partialMsgLength
 	}
 
+}
+
+type Counter struct {
+	title string
+
+	frameSeconds int
+	frameCounter int
+	countInFrame int
+	totalCount   int64
+}
+
+// NewCounter()
+
+func (c *Counter) run() {
+
+	for {
+		<-time.After(time.Duration(c.frameSeconds) * time.Second)
+		c.totalCount += int64(c.countInFrame)
+		c.report()
+		c.countInFrame = 0
+		c.frameCounter++
+	}
+}
+
+func (c *Counter) Add(count int) {
+	c.countInFrame += count
+}
+
+func (c *Counter) report() {
+	fmt.Println(c.title+" frame rate: ", c.countInFrame/c.frameSeconds, " points/sec")
 }

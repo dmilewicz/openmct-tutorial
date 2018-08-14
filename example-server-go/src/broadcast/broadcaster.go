@@ -107,14 +107,10 @@ func (b *broadcaster) broadcast(m interface{}) {
 	}
 }
 
-var counter int = 0
-
 func (b *broadcaster) run() {
 	for {
 		select {
 		case m := <-b.input:
-			// fmt.Println("sending ", counter)
-			counter++
 			b.broadcast(m)
 		case ch, ok := <-b.reg:
 			if ok {

@@ -1,0 +1,417 @@
+=============== Aug 13, 2018 (PDT) ===============
+19:57:06.221994 table@build created L2@6470 N·84728 S·2MiB "pro..335,v13044173":"pro..335,v13643310"
+19:57:06.297681 table@build created L2@6471 N·78669 S·2MiB "pro..335,v13643317":"pro..569,v123575"
+19:57:06.297805 version@stat F·[1 55 141] S·382MiB[785KiB 99MiB 282MiB] Sc·[0.25 0.99 0.28]
+19:57:06.297944 table@compaction committed F~ S+86B Ke·0 D·0 T·174.115632ms
+19:57:06.298263 table@remove removed @6427
+19:57:06.298537 table@remove removed @6413
+19:57:09.010568 memdb@flush N·30314 S·3MiB
+19:57:09.033172 memdb@flush created L0@6473 N·30314 S·785KiB "com..793,v15574056":"pwr..793,v15604363"
+19:57:09.033231 version@stat F·[2 55 141] S·383MiB[1MiB 99MiB 282MiB] Sc·[0.50 0.99 0.28]
+19:57:09.033384 memdb@flush committed F·1 T·22.773246ms
+19:57:09.033909 journal@remove removed @6464
+19:57:12.306168 memdb@flush N·30314 S·3MiB
+19:57:12.335286 memdb@flush created L0@6475 N·30314 S·785KiB "com..793,v15604373":"pwr..793,v15634680"
+19:57:12.335332 version@stat F·[3 55 141] S·384MiB[2MiB 99MiB 282MiB] Sc·[0.75 0.99 0.28]
+19:57:12.335530 memdb@flush committed F·1 T·29.298957ms
+19:57:12.336076 journal@remove removed @6472
+19:57:15.502692 memdb@flush N·30314 S·3MiB
+19:57:15.524589 memdb@flush created L0@6477 N·30314 S·785KiB "com..793,v15634683":"pwr..793,v15664990"
+19:57:15.524631 version@stat F·[4 55 141] S·385MiB[3MiB 99MiB 282MiB] Sc·[1.00 0.99 0.28]
+19:57:15.524779 memdb@flush committed F·1 T·22.047274ms
+19:57:15.525246 journal@remove removed @6474
+19:57:15.525358 table@compaction L0·4 -> L1·46 S·89MiB Q·15665244
+19:57:15.542216 table@build created L1@6478 N·17147 S·416KiB "com..793,v15543746":"com..793,v15664993"
+19:57:15.626581 table@build created L1@6479 N·86205 S·2MiB "com..335,v13705080":"com..335,v14314668"
+19:57:15.712132 table@build created L1@6480 N·86764 S·2MiB "com..335,v14314675":"com..793,v15054118"
+19:57:15.822213 table@build created L1@6481 N·85680 S·2MiB "com..860,v14811546":"com..793,v15534080"
+19:57:15.841373 table@build created L1@6482 N·18513 S·460KiB "com..793,v15534087":"com..793,v15664994"
+19:57:15.928912 table@build created L1@6483 N·84660 S·2MiB "pro..793,v14937460":"pro..793,v15536114"
+19:57:15.947163 table@build created L1@6484 N·18225 S·452KiB "pro..793,v15536121":"pro..793,v15664991"
+19:57:16.034605 table@build created L1@6485 N·84728 S·2MiB "pro..335,v13958786":"pro..335,v14557930"
+19:57:16.143992 table@build created L1@6486 N·74436 S·2MiB "pro..335,v14557937":"pro..125,v7293291"
+19:57:16.230573 table@build created L1@6487 N·71812 S·2MiB "pro..793,v15114330":"pro..793,v15335383"
+19:57:16.333183 table@build created L1@6488 N·72098 S·2MiB "pro..125,v7514351":"pro..793,v15612737"
+19:57:16.409123 table@build created L1@6489 N·70356 S·2MiB "pro..793,v15612744":"pro..125,v8192069"
+19:57:16.499515 table@build created L1@6490 N·70356 S·2MiB "pro..125,v8192076":"pro..125,v8689587"
+19:57:16.575571 table@build created L1@6491 N·70356 S·2MiB "pro..125,v8689594":"pro..125,v9187105"
+19:57:16.651161 table@build created L1@6492 N·70382 S·2MiB "pro..125,v9187112":"pro..125,v9684805"
+19:57:16.728573 table@build created L1@6493 N·70356 S·2MiB "pro..125,v9684812":"pro..125,v10182323"
+19:57:16.812493 table@build created L1@6494 N·70356 S·2MiB "pro..125,v10182330":"pro..125,v10679841"
+19:57:16.914742 table@build created L1@6495 N·58964 S·1MiB "pro..125,v10679848":"pro..125,v11096803"
+19:57:17.000809 table@build created L1@6496 N·70356 S·2MiB "pro..125,v11096810":"pro..125,v11594314"
+19:57:17.090900 table@build created L1@6497 N·70356 S·2MiB "pro..125,v11594321":"pro..125,v12091832"
+19:57:17.188155 table@build created L1@6498 N·70330 S·2MiB "pro..125,v12091839":"pro..335,v12589000"
+19:57:17.288765 table@build created L1@6499 N·70200 S·2MiB "pro..335,v12589007":"pro..335,v13084081"
+19:57:17.373851 table@build created L1@6500 N·70330 S·2MiB "pro..335,v13084088":"pro..335,v13581417"
+19:57:17.453129 table@build created L1@6501 N·70330 S·2MiB "pro..335,v13581424":"pro..335,v14078753"
+19:57:17.558898 table@build created L1@6502 N·70330 S·2MiB "pro..335,v14078760":"pro..335,v14576082"
+19:57:17.654276 table@build created L1@6503 N·94542 S·2MiB "pro..335,v14576089":"pwr..793,v15244625"
+19:57:17.713585 table@build created L1@6504 N·59446 S·1MiB "pwr..793,v15244632":"pwr..793,v15664989"
+19:57:17.828085 table@build created L1@6505 N·98665 S·2MiB "pwr..125,v8959399":"pwr..125,v9657096"
+19:57:17.928682 table@build created L1@6506 N·98665 S·2MiB "pwr..125,v9657103":"pwr..125,v10354800"
+19:57:18.028705 table@build created L1@6507 N·98665 S·2MiB "pwr..125,v10354807":"pwr..125,v11052504"
+19:57:18.134932 table@build created L1@6508 N·98665 S·2MiB "pwr..125,v11052511":"pwr..125,v11750201"
+19:57:18.238363 table@build created L1@6509 N·98630 S·2MiB "pwr..125,v11750208":"pwr..335,v12447640"
+19:57:18.347859 table@build created L1@6510 N·98385 S·2MiB "pwr..335,v12447647":"pwr..335,v13141898"
+19:57:18.448862 table@build created L1@6511 N·98315 S·2MiB "pwr..335,v13141905":"pwr..335,v13837124"
+19:57:18.572316 table@build created L1@6512 N·98315 S·2MiB "pwr..335,v13837131":"pwr..335,v14532350"
+19:57:18.653636 table@build created L1@6513 N·79026 S·2MiB "pwr..335,v14532357":"pwr..793,v15135599"
+19:57:18.728798 table@build created L1@6514 N·71570 S·2MiB "pwr..860,v14893034":"pwr..793,v15597277"
+19:57:18.733916 table@build created L1@6515 N·4944 S·145KiB "pwr..793,v15597284":"pwr..793,v15632235"
+19:57:18.739697 table@build created L1@6516 N·4633 S·136KiB "pwr..793,v15632242":"pwr..793,v15664995"
+19:57:18.839021 table@build created L1@6517 N·71264 S·2MiB "pwr..125,v10899490":"pwr..125,v11403420"
+19:57:18.909843 table@build created L1@6518 N·71264 S·2MiB "pwr..125,v11403427":"pwr..125,v11907357"
+19:57:18.980474 table@build created L1@6519 N·71264 S·2MiB "pwr..125,v11907364":"pwr..335,v12411281"
+19:57:19.050315 table@build created L1@6520 N·71230 S·2MiB "pwr..335,v12411288":"pwr..335,v12913734"
+19:57:19.117406 memdb@flush N·30314 S·3MiB
+19:57:19.151450 table@build created L1@6521 N·71230 S·2MiB "pwr..335,v12913741":"pwr..335,v13417200"
+19:57:19.171027 memdb@flush created L0@6523 N·30314 S·785KiB "com..793,v15665000":"pwr..793,v15695307"
+19:57:19.171080 version@stat F·[5 55 141] S·385MiB[3MiB 99MiB 282MiB] Sc·[1.25 0.99 0.28]
+19:57:19.171214 memdb@flush committed F·1 T·19.710309ms
+19:57:19.171784 journal@remove removed @6476
+19:57:19.250185 table@build created L1@6524 N·71230 S·2MiB "pwr..335,v13417207":"pwr..335,v13920899"
+19:57:19.334740 table@build created L1@6525 N·71230 S·2MiB "pwr..335,v13920906":"pwr..335,v14424598"
+19:57:19.409551 table@build created L1@6526 N·75387 S·2MiB "pwr..335,v14424605":"pwr..860,v14826284"
+19:57:19.485611 table@build created L1@6527 N·78855 S·2MiB "pwr..793,v15068863":"pwr..793,v15515302"
+19:57:19.511378 table@build created L1@6528 N·21168 S·567KiB "pwr..793,v15515309":"pwr..793,v15664990"
+19:57:19.511507 version@stat F·[1 58 141] S·385MiB[785KiB 102MiB 282MiB] Sc·[0.25 1.02 0.28]
+19:57:19.511746 table@compaction committed F-1 S-72KiB Ke·0 D·1225 T·3.986367451s
+19:57:19.511967 table@remove removed @6477
+19:57:19.512135 table@remove removed @6475
+19:57:19.512282 table@remove removed @6473
+19:57:19.512427 table@remove removed @6465
+19:57:19.512678 table@remove removed @6421
+19:57:19.512928 table@remove removed @6422
+19:57:19.513158 table@remove removed @6423
+19:57:19.513249 table@remove removed @6424
+19:57:19.513475 table@remove removed @6425
+19:57:19.513554 table@remove removed @6426
+19:57:19.513793 table@remove removed @6428
+19:57:19.514026 table@remove removed @6429
+19:57:19.514261 table@remove removed @6430
+19:57:19.514502 table@remove removed @6431
+19:57:19.514734 table@remove removed @6432
+19:57:19.514969 table@remove removed @6433
+19:57:19.515211 table@remove removed @6434
+19:57:19.515428 table@remove removed @6435
+19:57:19.515645 table@remove removed @6436
+19:57:19.515861 table@remove removed @6437
+19:57:19.516043 table@remove removed @6438
+19:57:19.516268 table@remove removed @6439
+19:57:19.516490 table@remove removed @6440
+19:57:19.516719 table@remove removed @6441
+19:57:19.516941 table@remove removed @6442
+19:57:19.517149 table@remove removed @6443
+19:57:19.517397 table@remove removed @6444
+19:57:19.517616 table@remove removed @6445
+19:57:19.517840 table@remove removed @6446
+19:57:19.517978 table@remove removed @6447
+19:57:19.518190 table@remove removed @6448
+19:57:19.518410 table@remove removed @6449
+19:57:19.518697 table@remove removed @6450
+19:57:19.518955 table@remove removed @6451
+19:57:19.519190 table@remove removed @6452
+19:57:19.519418 table@remove removed @6453
+19:57:19.519671 table@remove removed @6454
+19:57:19.519878 table@remove removed @6455
+19:57:19.520113 table@remove removed @6456
+19:57:19.520322 table@remove removed @6457
+19:57:19.520569 table@remove removed @6458
+19:57:19.520810 table@remove removed @6459
+19:57:19.521044 table@remove removed @6460
+19:57:19.521298 table@remove removed @6461
+19:57:19.521524 table@remove removed @6462
+19:57:19.521796 table@remove removed @6463
+19:57:19.522043 table@remove removed @6466
+19:57:19.522283 table@remove removed @6467
+19:57:19.522504 table@remove removed @6468
+19:57:19.522605 table@remove removed @6469
+19:57:19.522700 table@compaction L1·1 -> L2·1 S·4MiB Q·15697627
+19:57:19.611874 table@build created L2@6529 N·84728 S·2MiB "pro..335,v13643317":"pro..335,v14242461"
+19:57:19.692009 table@build created L2@6530 N·78669 S·2MiB "pro..335,v14242468":"pro..569,v123575"
+19:57:19.692135 version@stat F·[1 57 142] S·385MiB[785KiB 100MiB 284MiB] Sc·[0.25 1.00 0.28]
+19:57:19.692277 table@compaction committed F~ S+72B Ke·0 D·0 T·169.552381ms
+19:57:19.692583 table@remove removed @6485
+19:57:19.692887 table@remove removed @6471
+19:57:19.692947 table@compaction L1·1 -> L2·2 S·4MiB Q·15699622
+19:57:19.775111 table@build created L2@6531 N·81449 S·2MiB "pro..335,v14242468":"pro..125,v7135672"
+19:57:19.877291 table@build created L2@6532 N·71344 S·2MiB "pro..569,v46029":"pro..569,v171980"
+19:57:19.922217 table@build created L2@6533 N·28960 S·856KiB "pro..793,v15082655":"pro..569,v281047"
+19:57:19.922393 version@stat F·[1 56 143] S·385MiB[785KiB 98MiB 286MiB] Sc·[0.25 0.98 0.29]
+19:57:19.922630 table@compaction committed F~ S+9KiB Ke·0 D·0 T·229.65937ms
+19:57:19.923011 table@remove removed @6486
+19:57:19.923292 table@remove removed @6530
+19:57:19.923441 table@remove removed @6411
+19:57:22.780796 memdb@flush N·30314 S·3MiB
+19:57:22.813267 memdb@flush created L0@6535 N·30314 S·785KiB "com..793,v15695310":"pwr..793,v15725617"
+19:57:22.813321 version@stat F·[2 56 143] S·386MiB[1MiB 98MiB 286MiB] Sc·[0.50 0.98 0.29]
+19:57:22.813538 memdb@flush committed F·1 T·32.708337ms
+19:57:22.814038 journal@remove removed @6522
+19:57:25.929034 memdb@flush N·30314 S·3MiB
+19:57:25.956059 memdb@flush created L0@6537 N·30314 S·785KiB "com..793,v15725627":"pwr..793,v15755934"
+19:57:25.956105 version@stat F·[3 56 143] S·387MiB[2MiB 98MiB 286MiB] Sc·[0.75 0.98 0.29]
+19:57:25.956260 memdb@flush committed F·1 T·27.186841ms
+19:57:25.956831 journal@remove removed @6534
+19:57:29.357586 memdb@flush N·30314 S·3MiB
+19:57:29.387064 memdb@flush created L0@6539 N·30314 S·785KiB "com..793,v15755944":"pwr..793,v15786251"
+19:57:29.387113 version@stat F·[4 56 143] S·388MiB[3MiB 98MiB 286MiB] Sc·[1.00 0.98 0.29]
+19:57:29.387317 memdb@flush committed F·1 T·29.684379ms
+19:57:29.387888 journal@remove removed @6536
+19:57:29.388016 table@compaction L0·4 -> L1·46 S·87MiB Q·15787816
+19:57:29.411096 table@build created L1@6540 N·17147 S·417KiB "com..793,v15665000":"com..793,v15786247"
+19:57:29.495540 table@build created L1@6541 N·86205 S·2MiB "com..335,v13705080":"com..335,v14314668"
+19:57:29.587105 table@build created L1@6542 N·86764 S·2MiB "com..335,v14314675":"com..793,v15054118"
+19:57:29.676921 table@build created L1@6543 N·85680 S·2MiB "com..860,v14811546":"com..793,v15534080"
+19:57:29.732403 table@build created L1@6544 N·35660 S·886KiB "com..793,v15534087":"com..793,v15786248"
+19:57:29.825793 table@build created L1@6545 N·84660 S·2MiB "pro..793,v14937460":"pro..793,v15536114"
+19:57:29.863301 table@build created L1@6546 N·35372 S·877KiB "pro..793,v15536121":"pro..793,v15786245"
+19:57:29.946210 table@build created L1@6547 N·71812 S·2MiB "pro..793,v15114330":"pro..793,v15335383"
+19:57:30.046321 table@build created L1@6548 N·72098 S·2MiB "pro..125,v7514351":"pro..793,v15612737"
+19:57:30.129694 table@build created L1@6549 N·70148 S·2MiB "pro..793,v15612744":"pro..125,v8069345"
+19:57:30.222201 table@build created L1@6550 N·70174 S·2MiB "pro..125,v8069352":"pro..125,v8565575"
+19:57:30.327752 table@build created L1@6551 N·70148 S·2MiB "pro..125,v8565582":"pro..125,v9061623"
+19:57:30.422057 table@build created L1@6552 N·70174 S·2MiB "pro..125,v9061630":"pro..125,v9557853"
+19:57:30.500572 table@build created L1@6553 N·70174 S·2MiB "pro..125,v9557860":"pro..125,v10054083"
+19:57:30.578028 table@build created L1@6554 N·70174 S·2MiB "pro..125,v10054090":"pro..125,v10550313"
+19:57:30.658073 table@build created L1@6555 N·70174 S·2MiB "pro..125,v10550320":"pro..125,v11046543"
+19:57:30.740119 table@build created L1@6556 N·70174 S·2MiB "pro..125,v11046550":"pro..125,v11542773"
+19:57:30.840584 table@build created L1@6557 N·70174 S·2MiB "pro..125,v11542780":"pro..125,v12039003"
+19:57:30.879467 table@build created L1@6558 N·32441 S·972KiB "pro..125,v12039010":"pro..125,v12268407"
+19:57:30.971095 table@build created L1@6559 N·70226 S·2MiB "pro..335,v12268415":"pro..335,v12763742"
+19:57:31.060188 table@build created L1@6560 N·70304 S·2MiB "pro..335,v12763749":"pro..335,v13260656"
+19:57:31.169277 table@build created L1@6561 N·70330 S·2MiB "pro..335,v13260663":"pro..335,v13757992"
+19:57:31.256571 table@build created L1@6562 N·70330 S·2MiB "pro..335,v13757999":"pro..335,v14255321"
+19:57:31.360265 table@build created L1@6563 N·74081 S·2MiB "pro..335,v14255328":"pwr..860,v14737033"
+19:57:31.500286 table@build created L1@6564 N·100730 S·2MiB "pwr..793,v14979605":"pwr..793,v15491480"
+19:57:31.622761 table@build created L1@6565 N·98595 S·2MiB "pwr..793,v15491487":"pwr..125,v9361829"
+19:57:31.737030 table@build created L1@6566 N·98665 S·2MiB "pwr..125,v9361836":"pwr..125,v10059533"
+19:57:31.865308 table@build created L1@6567 N·98665 S·2MiB "pwr..125,v10059540":"pwr..125,v10757237"
+19:57:31.933750 table@build created L1@6568 N·50441 S·1MiB "pwr..125,v10757244":"pwr..125,v11113922"
+19:57:32.037471 table@build created L1@6569 N·98630 S·2MiB "pwr..125,v11113929":"pwr..125,v11811381"
+19:57:32.137534 table@build created L1@6570 N·98560 S·2MiB "pwr..125,v11811388":"pwr..335,v12508323"
+19:57:32.235213 table@build created L1@6571 N·98420 S·2MiB "pwr..335,v12508330":"pwr..335,v13202826"
+19:57:32.355840 table@build created L1@6572 N·98525 S·2MiB "pwr..335,v13202833":"pwr..335,v13899536"
+19:57:32.461611 table@build created L1@6573 N·98525 S·2MiB "pwr..335,v13899543":"pwr..335,v14596246"
+19:57:32.546188 table@build created L1@6574 N·76728 S·2MiB "pwr..335,v14596253":"pwr..793,v15159427"
+19:57:32.630122 table@build created L1@6575 N·71400 S·2MiB "pwr..860,v14916855":"pwr..793,v15643722"
+19:57:32.664620 table@build created L1@6576 N·20156 S·591KiB "pwr..793,v15643729":"pwr..793,v15786249"
+19:57:32.753108 table@build created L1@6577 N·71264 S·2MiB "pwr..125,v10899490":"pwr..125,v11403420"
+19:57:32.838619 table@build created L1@6578 N·71264 S·2MiB "pwr..125,v11403427":"pwr..125,v11907357"
+19:57:32.919062 table@build created L1@6579 N·71264 S·2MiB "pwr..125,v11907364":"pwr..335,v12411281"
+19:57:32.994783 memdb@flush N·30314 S·3MiB
+19:57:33.022553 table@build created L1@6580 N·71230 S·2MiB "pwr..335,v12411288":"pwr..335,v12913734"
+19:57:33.046873 memdb@flush created L0@6582 N·30314 S·785KiB "com..793,v15786254":"pwr..793,v15816561"
+19:57:33.046916 version@stat F·[5 56 143] S·388MiB[3MiB 98MiB 286MiB] Sc·[1.25 0.98 0.29]
+19:57:33.047070 memdb@flush committed F·1 T·24.477594ms
+19:57:33.047763 journal@remove removed @6538
+19:57:33.129255 table@build created L1@6583 N·71230 S·2MiB "pwr..335,v12913741":"pwr..335,v13417200"
+19:57:33.205806 table@build created L1@6584 N·71230 S·2MiB "pwr..335,v13417207":"pwr..335,v13920899"
+19:57:33.293605 table@build created L1@6585 N·71230 S·2MiB "pwr..335,v13920906":"pwr..335,v14424598"
+19:57:33.402272 table@build created L1@6586 N·75387 S·2MiB "pwr..335,v14424605":"pwr..860,v14826284"
+19:57:33.496685 table@build created L1@6587 N·78855 S·2MiB "pwr..793,v15068863":"pwr..793,v15515302"
+19:57:33.542032 table@build created L1@6588 N·38316 S·1MiB "pwr..793,v15515309":"pwr..793,v15786251"
+19:57:33.542152 version@stat F·[1 57 143] S·388MiB[785KiB 101MiB 286MiB] Sc·[0.25 1.01 0.29]
+19:57:33.542357 table@compaction committed F-3 S+9KiB Ke·0 D·1225 T·4.15430227s
+19:57:33.542566 table@remove removed @6539
+19:57:33.542729 table@remove removed @6537
+19:57:33.542890 table@remove removed @6535
+19:57:33.543060 table@remove removed @6523
+19:57:33.543317 table@remove removed @6479
+19:57:33.543595 table@remove removed @6480
+19:57:33.543891 table@remove removed @6481
+19:57:33.544028 table@remove removed @6482
+19:57:33.544302 table@remove removed @6483
+19:57:33.544421 table@remove removed @6484
+19:57:33.544712 table@remove removed @6487
+19:57:33.544971 table@remove removed @6488
+19:57:33.545242 table@remove removed @6489
+19:57:33.545501 table@remove removed @6490
+19:57:33.545738 table@remove removed @6491
+19:57:33.545999 table@remove removed @6492
+19:57:33.546285 table@remove removed @6493
+19:57:33.546538 table@remove removed @6494
+19:57:33.546774 table@remove removed @6495
+19:57:33.547020 table@remove removed @6496
+19:57:33.547262 table@remove removed @6497
+19:57:33.547505 table@remove removed @6498
+19:57:33.547753 table@remove removed @6499
+19:57:33.547986 table@remove removed @6500
+19:57:33.548230 table@remove removed @6501
+19:57:33.548459 table@remove removed @6502
+19:57:33.548719 table@remove removed @6503
+19:57:33.548907 table@remove removed @6504
+19:57:33.549141 table@remove removed @6505
+19:57:33.549412 table@remove removed @6506
+19:57:33.549729 table@remove removed @6507
+19:57:33.550093 table@remove removed @6508
+19:57:33.550472 table@remove removed @6509
+19:57:33.550755 table@remove removed @6510
+19:57:33.551056 table@remove removed @6511
+19:57:33.551328 table@remove removed @6512
+19:57:33.551570 table@remove removed @6513
+19:57:33.551815 table@remove removed @6514
+19:57:33.551947 table@remove removed @6515
+19:57:33.552047 table@remove removed @6516
+19:57:33.552314 table@remove removed @6517
+19:57:33.552588 table@remove removed @6518
+19:57:33.552923 table@remove removed @6519
+19:57:33.553239 table@remove removed @6520
+19:57:33.553564 table@remove removed @6521
+19:57:33.553829 table@remove removed @6524
+19:57:33.554132 table@remove removed @6525
+19:57:33.554467 table@remove removed @6526
+19:57:33.554812 table@remove removed @6527
+19:57:33.555084 table@remove removed @6528
+19:57:33.555211 table@compaction L1·1 -> L2·2 S·4MiB Q·15819947
+19:57:33.636726 table@build created L2@6589 N·71526 S·2MiB "pro..793,v15082655":"pro..569,v307885"
+19:57:33.740823 table@build created L2@6590 N·71500 S·2MiB "pro..793,v15218560":"pro..569,v579142"
+19:57:33.768279 table@build created L2@6591 N·27972 S·837KiB "pro..569,v579149":"pro..569,v776920"
+19:57:33.768427 version@stat F·[1 56 144] S·388MiB[785KiB 99MiB 288MiB] Sc·[0.25 0.99 0.29]
+19:57:33.768601 table@compaction committed F~ S-25KiB Ke·0 D·0 T·213.352041ms
+19:57:33.768915 table@remove removed @6547
+19:57:33.769149 table@remove removed @6533
+19:57:33.769484 table@remove removed @2583
+19:57:36.425857 memdb@flush N·30314 S·3MiB
+19:57:36.456855 memdb@flush created L0@6593 N·30314 S·785KiB "com..793,v15816571":"pwr..793,v15846878"
+19:57:36.456899 version@stat F·[2 56 144] S·389MiB[1MiB 99MiB 288MiB] Sc·[0.50 0.99 0.29]
+19:57:36.457153 memdb@flush committed F·1 T·31.245772ms
+19:57:36.457764 journal@remove removed @6581
+19:57:39.701295 memdb@flush N·30314 S·3MiB
+19:57:39.723274 memdb@flush created L0@6595 N·30314 S·785KiB "com..793,v15846881":"pwr..793,v15877188"
+19:57:39.723318 version@stat F·[3 56 144] S·390MiB[2MiB 99MiB 288MiB] Sc·[0.75 0.99 0.29]
+19:57:39.723473 memdb@flush committed F·1 T·22.122203ms
+19:57:39.724061 journal@remove removed @6592
+19:57:42.969534 memdb@flush N·30314 S·3MiB
+19:57:42.998158 memdb@flush created L0@6597 N·30314 S·785KiB "com..793,v15877198":"pwr..793,v15907505"
+19:57:42.998200 version@stat F·[4 56 144] S·391MiB[3MiB 99MiB 288MiB] Sc·[1.00 0.99 0.29]
+19:57:42.998364 memdb@flush committed F·1 T·28.7951ms
+19:57:42.998893 journal@remove removed @6594
+19:57:42.998981 table@compaction L0·4 -> L1·45 S·88MiB Q·15908758
+19:57:43.017506 table@build created L1@6598 N·17147 S·416KiB "com..793,v15786254":"com..793,v15907501"
+19:57:43.105417 table@build created L1@6599 N·86205 S·2MiB "com..335,v13705080":"com..335,v14314668"
+19:57:43.191089 table@build created L1@6600 N·86764 S·2MiB "com..335,v14314675":"com..793,v15054118"
+19:57:43.293478 table@build created L1@6601 N·85680 S·2MiB "com..860,v14811546":"com..793,v15534080"
+19:57:43.354534 table@build created L1@6602 N·52807 S·1MiB "com..793,v15534087":"com..793,v15907502"
+19:57:43.440391 table@build created L1@6603 N·84660 S·2MiB "pro..793,v14937460":"pro..793,v15536114"
+19:57:43.495317 table@build created L1@6604 N·52520 S·1MiB "pro..793,v15536121":"pro..793,v15907506"
+19:57:43.612791 table@build created L1@6605 N·72098 S·2MiB "pro..125,v7514351":"pro..793,v15612737"
+19:57:43.701416 table@build created L1@6606 N·70174 S·2MiB "pro..793,v15612744":"pro..125,v7948266"
+19:57:43.794159 table@build created L1@6607 N·70174 S·2MiB "pro..125,v7948273":"pro..125,v8444496"
+19:57:43.895908 table@build created L1@6608 N·70148 S·2MiB "pro..125,v8444503":"pro..125,v8940544"
+19:57:44.001755 table@build created L1@6609 N·70148 S·2MiB "pro..125,v8940551":"pro..125,v9436592"
+19:57:44.077903 table@build created L1@6610 N·70174 S·2MiB "pro..125,v9436599":"pro..125,v9932822"
+19:57:44.156608 table@build created L1@6611 N·70174 S·2MiB "pro..125,v9932829":"pro..125,v10429052"
+19:57:44.234455 table@build created L1@6612 N·70174 S·2MiB "pro..125,v10429059":"pro..125,v10925282"
+19:57:44.327401 table@build created L1@6613 N·70174 S·2MiB "pro..125,v10925289":"pro..125,v11421512"
+19:57:44.424730 table@build created L1@6614 N·70148 S·2MiB "pro..125,v11421519":"pro..125,v11917560"
+19:57:44.486853 table@build created L1@6615 N·49615 S·1MiB "pro..125,v11917567":"pro..125,v12268407"
+19:57:44.576430 table@build created L1@6616 N·70226 S·2MiB "pro..335,v12268415":"pro..335,v12763742"
+19:57:44.672504 table@build created L1@6617 N·70304 S·2MiB "pro..335,v12763749":"pro..335,v13260656"
+19:57:44.767862 table@build created L1@6618 N·70330 S·2MiB "pro..335,v13260663":"pro..335,v13757992"
+19:57:44.853898 table@build created L1@6619 N·70330 S·2MiB "pro..335,v13757999":"pro..335,v14255321"
+19:57:44.936569 table@build created L1@6620 N·74081 S·2MiB "pro..335,v14255328":"pwr..860,v14737033"
+19:57:45.079200 table@build created L1@6621 N·100730 S·2MiB "pwr..793,v14979605":"pwr..793,v15491480"
+19:57:45.179762 table@build created L1@6622 N·98455 S·2MiB "pwr..793,v15491487":"pwr..125,v9239588"
+19:57:45.276565 table@build created L1@6623 N·98420 S·2MiB "pwr..125,v9239595":"pwr..125,v9935556"
+19:57:45.380047 table@build created L1@6624 N·98420 S·2MiB "pwr..125,v9935563":"pwr..125,v10631524"
+19:57:45.460285 table@build created L1@6625 N·68218 S·1MiB "pwr..125,v10631531":"pwr..125,v11113922"
+19:57:45.580789 table@build created L1@6626 N·98630 S·2MiB "pwr..125,v11113929":"pwr..125,v11811381"
+19:57:45.682526 table@build created L1@6627 N·98560 S·2MiB "pwr..125,v11811388":"pwr..335,v12508323"
+19:57:45.805551 table@build created L1@6628 N·98420 S·2MiB "pwr..335,v12508330":"pwr..335,v13202826"
+19:57:45.907283 table@build created L1@6629 N·98525 S·2MiB "pwr..335,v13202833":"pwr..335,v13899536"
+19:57:46.005695 table@build created L1@6630 N·98525 S·2MiB "pwr..335,v13899543":"pwr..335,v14596246"
+19:57:46.094799 table@build created L1@6631 N·76728 S·2MiB "pwr..335,v14596253":"pwr..793,v15159427"
+19:57:46.193922 table@build created L1@6632 N·71400 S·2MiB "pwr..860,v14916855":"pwr..793,v15643722"
+19:57:46.237786 table@build created L1@6633 N·37303 S·1MiB "pwr..793,v15643729":"pwr..793,v15907503"
+19:57:46.319224 table@build created L1@6634 N·71264 S·2MiB "pwr..125,v10899490":"pwr..125,v11403420"
+19:57:46.400592 table@build created L1@6635 N·71264 S·2MiB "pwr..125,v11403427":"pwr..125,v11907357"
+19:57:46.502089 table@build created L1@6636 N·71264 S·2MiB "pwr..125,v11907364":"pwr..335,v12411281"
+19:57:46.582835 table@build created L1@6637 N·71230 S·2MiB "pwr..335,v12411288":"pwr..335,v12913734"
+19:57:46.713819 table@build created L1@6638 N·71230 S·2MiB "pwr..335,v12913741":"pwr..335,v13417200"
+19:57:46.844623 table@build created L1@6639 N·71230 S·2MiB "pwr..335,v13417207":"pwr..335,v13920899"
+19:57:46.857422 memdb@flush N·30314 S·3MiB
+19:57:46.956670 table@build created L1@6640 N·71230 S·2MiB "pwr..335,v13920906":"pwr..335,v14424598"
+19:57:46.979800 memdb@flush created L0@6642 N·30314 S·785KiB "com..793,v15907508":"pwr..793,v15937815"
+19:57:46.979856 version@stat F·[5 56 144] S·392MiB[3MiB 99MiB 288MiB] Sc·[1.25 0.99 0.29]
+19:57:46.979997 memdb@flush committed F·1 T·23.262574ms
+19:57:46.980612 journal@remove removed @6596
+19:57:47.064475 table@build created L1@6643 N·75387 S·2MiB "pwr..335,v14424605":"pwr..860,v14826284"
+19:57:47.149828 table@build created L1@6644 N·78855 S·2MiB "pwr..793,v15068863":"pwr..793,v15515302"
+19:57:47.211190 table@build created L1@6645 N·55463 S·1MiB "pwr..793,v15515309":"pwr..793,v15907505"
+19:57:47.211320 version@stat F·[1 57 144] S·392MiB[785KiB 102MiB 288MiB] Sc·[0.25 1.02 0.29]
+19:57:47.211492 table@compaction committed F-3 S-13KiB Ke·0 D·1225 T·4.212494348s
+19:57:47.211706 table@remove removed @6597
+19:57:47.211882 table@remove removed @6595
+19:57:47.212039 table@remove removed @6593
+19:57:47.212216 table@remove removed @6582
+19:57:47.212492 table@remove removed @6541
+19:57:47.212746 table@remove removed @6542
+19:57:47.213014 table@remove removed @6543
+19:57:47.213178 table@remove removed @6544
+19:57:47.213470 table@remove removed @6545
+19:57:47.213652 table@remove removed @6546
+19:57:47.213928 table@remove removed @6548
+19:57:47.214265 table@remove removed @6549
+19:57:47.214551 table@remove removed @6550
+19:57:47.214854 table@remove removed @6551
+19:57:47.215094 table@remove removed @6552
+19:57:47.215361 table@remove removed @6553
+19:57:47.215630 table@remove removed @6554
+19:57:47.215888 table@remove removed @6555
+19:57:47.216153 table@remove removed @6556
+19:57:47.216405 table@remove removed @6557
+19:57:47.216560 table@remove removed @6558
+19:57:47.216786 table@remove removed @6559
+19:57:47.217006 table@remove removed @6560
+19:57:47.217252 table@remove removed @6561
+19:57:47.217495 table@remove removed @6562
+19:57:47.217716 table@remove removed @6563
+19:57:47.217964 table@remove removed @6564
+19:57:47.218207 table@remove removed @6565
+19:57:47.218431 table@remove removed @6566
+19:57:47.218666 table@remove removed @6567
+19:57:47.218847 table@remove removed @6568
+19:57:47.219074 table@remove removed @6569
+19:57:47.219317 table@remove removed @6570
+19:57:47.219573 table@remove removed @6571
+19:57:47.219802 table@remove removed @6572
+19:57:47.220029 table@remove removed @6573
+19:57:47.220292 table@remove removed @6574
+19:57:47.220550 table@remove removed @6575
+19:57:47.220689 table@remove removed @6576
+19:57:47.220952 table@remove removed @6577
+19:57:47.221197 table@remove removed @6578
+19:57:47.221450 table@remove removed @6579
+19:57:47.221787 table@remove removed @6580
+19:57:47.222046 table@remove removed @6583
+19:57:47.222294 table@remove removed @6584
+19:57:47.222534 table@remove removed @6585
+19:57:47.222786 table@remove removed @6586
+19:57:47.223051 table@remove removed @6587
+19:57:47.223262 table@remove removed @6588
+19:57:47.223374 table@compaction L1·1 -> L2·2 S·4MiB Q·15940273
+19:57:47.335000 table@build created L2@6646 N·72072 S·2MiB "pro..793,v15218560":"pro..569,v477537"
+19:57:47.421994 table@build created L2@6647 N·72072 S·2MiB "pro..793,v15388212":"pro..125,v7737056"
+19:57:47.453245 table@build created L2@6648 N·27426 S·805KiB "pro..569,v647413":"pro..569,v776920"
+19:57:47.453389 version@stat F·[1 56 145] S·391MiB[785KiB 100MiB 290MiB] Sc·[0.25 1.00 0.29]
+19:57:47.453550 table@compaction committed F~ S-39KiB Ke·0 D·0 T·230.154818ms
+19:57:47.453877 table@remove removed @6605
+19:57:47.454186 table@remove removed @6590
+19:57:47.454343 table@remove removed @6591
+19:57:47.454414 table@compaction L1·1 -> L2·3 S·6MiB Q·15943136
+19:57:47.535814 table@build created L2@6649 N·72618 S·2MiB "pro..569,v647413":"pro..793,v15809955"
+19:57:47.631107 table@build created L2@6650 N·71188 S·2MiB "pro..569,v899280":"pro..569,v1303719"
+19:57:47.718544 table@build created L2@6651 N·72046 S·2MiB "pro..569,v1303726":"pro..569,v1613126"
+19:57:47.740621 table@build created L2@6652 N·22122 S·662KiB "pro..569,v1613133":"pro..569,v1769562"
+19:57:47.740756 version@stat F·[1 55 146] S·391MiB[785KiB 98MiB 292MiB] Sc·[0.25 0.98 0.29]
+19:57:47.740918 table@compaction committed F~ S-138KiB Ke·0 D·0 T·286.481526ms
+19:57:47.741275 table@remove removed @6606
+19:57:47.741479 table@remove removed @6648
+19:57:47.741733 table@remove removed @2584
+19:57:47.741984 table@remove removed @2585
+19:57:50.456863 memdb@flush N·30314 S·3MiB
+19:57:50.482692 memdb@flush created L0@6654 N·30314 S·785KiB "com..793,v15937825":"pwr..793,v15968132"
+19:57:50.482822 version@stat F·[2 55 146] S·392MiB[1MiB 98MiB 292MiB] Sc·[0.50 0.98 0.29]
+19:57:50.483044 memdb@flush committed F·1 T·26.129184ms
+19:57:50.483639 journal@remove removed @6641

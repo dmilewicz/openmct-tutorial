@@ -24,6 +24,7 @@ type RealtimeServer struct {
 	ws         *websocket.Conn
 	close      chan bool
 	wg         sync.WaitGroup
+	counter    Counter
 
 	RTCodec websocket.Codec
 }
@@ -42,6 +43,7 @@ func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn, 
 		dataIn:     l,
 		ws:         ws,
 		close:      make(chan bool),
+		counter:    Counter{title: "client", frameSeconds: 3},
 
 		RTCodec: websocket.Codec{websocket.JSON.Marshal, commandUnmarshal},
 	}
@@ -50,6 +52,7 @@ func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn, 
 	rs.wg.Add(2)
 	go rs.Recv(rs.RTCodec, rs.ws)
 	go rs.Send(rs.RTCodec, rs.ws)
+	go rs.counter.run()
 	rs.wg.Wait()
 
 	return rs
@@ -81,6 +84,7 @@ func (rs *RealtimeServer) Recv(c websocket.Codec, ws *websocket.Conn) {
 	rs.wg.Done()
 }
 
+// mark telemetry subscribe/unsubscribe
 func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 	switch tc.Cmd {
 	case Subscribe:
@@ -102,8 +106,14 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 		case i = <-rs.dataIn.Listen():
 			d = i.(Telemetry)
 
+			// if time.Time(d.Timestamp).After(time.Now()) {
+			// 	fmt.Println("After!!!")
+			// } else {
+			// 	fmt.Println("Before!!!")
+			// }
+
 			if _, ok := rs.subscribed[d.Name]; ok {
-				// fmt.Println("Sending: ", d)
+				rs.counter.Add(1)
 				err = c.Send(ws, d)
 			}
 

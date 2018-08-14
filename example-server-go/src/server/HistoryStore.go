@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/util"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -29,7 +30,6 @@ func NewHistoryStore() HistoryStore {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	hs := HistoryStore{
 		db:             db,
@@ -59,8 +59,6 @@ func (h *HistoryStore) storeHistory() {
 
 		err = h.db.Put([]byte(name), buf, nil)
 
-		// db.put
-		// h.history[d.Name] = append(h.history[d.Name], d)
 	}
 }
 
@@ -76,17 +74,16 @@ func (h *HistoryStore) getHistory(dr DataRequest) []Telemetry {
 	var telem []Telemetry
 	var err error
 
-	// r := util.Range{
-	// 	Start: []byte(dr.Value + strconv.FormatInt(dr.Start.UnixNano()/int64(time.Millisecond), 10)),
-	// 	Limit: []byte(dr.Value + strconv.FormatInt(dr.End.UnixNano()/int64(time.Millisecond), 10)),
-	// }
+	r := util.Range{
+		Start: []byte(dr.Value + strconv.FormatInt(dr.Start.UnixNano()/int64(time.Millisecond), 10)),
+		Limit: []byte(dr.Value + strconv.FormatInt(dr.End.UnixNano()/int64(time.Millisecond), 10)),
+	}
 
-	iter := h.db.NewIterator(nil, nil)
+	iter := h.db.NewIterator(&r, nil)
 
 	for iter.Next() {
-		fmt.Println("hellooooo")
 		t := new(Telemetry)
-		err = bson.Unmarshal(iter.Value(), *t)
+		err = bson.Unmarshal(iter.Value(), t)
 		if err != nil {
 			fmt.Println("Error: ", err)
 			continue
@@ -95,14 +92,7 @@ func (h *HistoryStore) getHistory(dr DataRequest) []Telemetry {
 		telem = append(telem, *t)
 	}
 
-	// for _, v := range h.history[dr.Value] {
-
-	// 	if time.Time(v.Timestamp).After(dr.Start) && time.Time(v.Timestamp).Before(dr.End) {
-	// 		telem = append(telem, v)
-	// 	}
-	// }
-
-	fmt.Println(telem)
+	fmt.Println(len(telem))
 
 	return telem
 }

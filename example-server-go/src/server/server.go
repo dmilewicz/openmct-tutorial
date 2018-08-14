@@ -49,8 +49,6 @@ func NewServer(port int, dr chan DataRequest, h chan []Telemetry, hs chan Teleme
 		}
 	}()
 
-	go ReadData(p)
-
 	dictChan := make(chan Telemetry)
 
 	s := telemetryServer{
@@ -69,6 +67,8 @@ func (s *telemetryServer) HandleWebsocket(ws *websocket.Conn) {
 }
 
 func (s telemetryServer) RunServer() {
+
+	go ReadData(s.parser)
 
 	// define handlers
 	http.Handle("/", http.FileServer(http.Dir("static")))

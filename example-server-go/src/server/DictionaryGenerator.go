@@ -167,6 +167,10 @@ func (t *OpenMCTTime) SetBSON(b bson.Raw) error {
 	return err
 }
 
+func (t OpenMCTTime) GetBSON() (interface{}, error) {
+	return time.Time(t), nil
+}
+
 func UnmarshalTelemetry(tBuf Telemetry) telemetryMetaData {
 	var vals []value
 
