@@ -22,6 +22,7 @@ type Parser interface {
 type Codec interface {
 	
 }
+	// return &bsonParser{counter: Counter{title: "parser", frameSeconds: 3}}
 
 type bsonParser struct {
 	bytesRead    int
@@ -40,8 +41,7 @@ type ParserBuilder interface {
 }
 
 func InitBuild() ParserBuilder {
-	return &bsonParser{counter: Counter{title: "parser", frameSeconds: 3}}
-	// return new(bsonParser)
+	return new(bsonParser)
 }
 
 func (bp *bsonParser) BufLen(buflen uint) ParserBuilder {
@@ -49,10 +49,10 @@ func (bp *bsonParser) BufLen(buflen uint) ParserBuilder {
 	return bp
 }
 
-// TODO: fix up this function
 func (bp *bsonParser) ParseTo(i interface{}) ParserBuilder {
 
 	v := reflect.ValueOf(i)
+	numChannels := 10
 
 	switch v.Kind() {
 	case reflect.Ptr:
@@ -62,20 +62,16 @@ func (bp *bsonParser) ParseTo(i interface{}) ParserBuilder {
 		break
 	case reflect.Struct:
 		bp.parseType = v.Type()
-		bp.dataDelivery = reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.PtrTo(v.Type())), 2)
+		bp.dataDelivery = reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.PtrTo(v.Type())), numChannels)
 		break
 	default:
 		
 	}
 	
-
-	
-
 	return bp
 }
 
 func (bp *bsonParser) Build() Parser {
-
 	return *bp
 }
 
