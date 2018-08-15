@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
 
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/syndtr/goleveldb/leveldb/util"
+	// "strconv"
+	"fmt"
+	"reflect"
+	// "github.com/syndtr/goleveldb/leveldb"
 )
 
 const (
@@ -14,47 +14,16 @@ const (
 	CONN_TYPE = "tcp"
 )
 
+type hdh struct {
+	f int
+	g uint
+
+
+}
+
 func main() {
 
-	db, _ := leveldb.OpenFile("db/leveldb1", nil)
+	s := &hdh{}
 
-	// for i := 0; i < 10; i++ {
-	// 	intstr := strconv.FormatInt(int64(i), 10)
-	// 	db.Put([]byte(intstr), []byte(intstr), nil)
-	// }
-
-	// for i := 0; i < 10; i++ {
-	// 	intstr := strconv.FormatInt(int64(i), 10)
-	// 	data, err := db.Get([]byte(intstr), nil)
-
-	// 	fmt.Println(string(data))
-	// 	fmt.Println(err)
-
-	// }
-
-	r := util.Range{
-		Start: []byte(strconv.FormatInt(int64(4), 10)),
-		Limit: []byte(strconv.FormatInt(int64(7), 10)),
-	}
-
-	it := db.NewIterator(&r, nil)
-
-	for it.Next() {
-		fmt.Println(string(it.Value()))
-	}
-
-	// var f, g interface{}
-	// f = "hello"
-	// g = "hells"
-
-	// h := make(map[interface{}]interface{})
-
-	// h[f] = 0
-
-	// if val, ok := h[g]; ok {
-	// 	fmt.Println("val good: ", val)
-	// } else {
-	// 	fmt.Println("nope")
-	// }
-
+	fmt.Println(reflect.ValueOf(s).Elem().Type())
 }

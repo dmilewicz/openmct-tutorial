@@ -71,7 +71,7 @@ func (s telemetryServer) RunServer() {
 	go ReadData(s.parser)
 
 	// define handlers
-	http.Handle("/", http.FileServer(http.Dir("static")))
+	http.Handle("/", http.FileServer(http.Dir("static/")))
 	http.Handle("/realtime/", websocket.Handler(s.HandleWebsocket))
 	http.HandleFunc("/history/", s.hserver.RunServer)
 
