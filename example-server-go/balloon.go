@@ -1,10 +1,8 @@
 package main
 
 import (
-
 	// "strconv"
 	"fmt"
-	"reflect"
 	// "github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -14,16 +12,14 @@ const (
 	CONN_TYPE = "tcp"
 )
 
-type hdh struct {
-	f int
-	g uint
+type ha map[string]string
 
-
+func nums(n ...int, f ...string) {
+	for _, v := range f {
+		fmt.Println(v)
+	}
 }
 
 func main() {
-
-	s := &hdh{}
-
-	fmt.Println(reflect.ValueOf(s).Elem().Type())
+	nums(1, 2, 3)
 }

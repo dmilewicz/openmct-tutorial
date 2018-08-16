@@ -14,12 +14,13 @@ import (
 )
 
 type telemetryServer struct {
-	dispatch Dispatcher
-	hserver  HistoryServer
-	dictgen  DictionaryGenerator
-	parser   bsonparser.Parser
-	wg       sync.WaitGroup
-	close    chan bool
+	dispatch   TelemetryDispatcher
+	dispatcher dispatcher
+	hserver    HistoryServer
+	dictgen    DictionaryGenerator
+	parser     bsonparser.Parser
+	wg         sync.WaitGroup
+	close      chan bool
 
 	conn_host string
 	conn_port string
@@ -32,7 +33,7 @@ type Server interface {
 func NewServer(port int, dr chan DataRequest, h chan []Telemetry, hs chan Telemetry) telemetryServer {
 	p := bsonparser.InitBuild().BufLen(1024).ParseTo(Telemetry{}).Build()
 
-	dataChan := make(chan Telemetry)
+	dataChan := make(chan interface{})
 
 	// Data Ingestion
 	go func() {
@@ -49,13 +50,17 @@ func NewServer(port int, dr chan DataRequest, h chan []Telemetry, hs chan Teleme
 		}
 	}()
 
+	var tID TelemID
+
 	dictChan := make(chan Telemetry)
+	d := NewTelemetryDispatcher(dataChan, tID, dictChan, hs)
 
 	s := telemetryServer{
-		parser:   p,
-		dispatch: NewDispatch(dataChan, hs, dictChan),
-		dictgen:  NewDictionaryGenerator(dictChan),
-		hserver:  HistoryServer{dr, h},
+		parser:     p,
+		dispatcher: d,
+		// dispatch:   NewDispatch(dataChan, hs, dictChan),
+		dictgen: NewDictionaryGenerator(dictChan),
+		hserver: HistoryServer{dr, h},
 	}
 
 	return s
@@ -63,7 +68,7 @@ func NewServer(port int, dr chan DataRequest, h chan []Telemetry, hs chan Teleme
 
 func (s *telemetryServer) HandleWebsocket(ws *websocket.Conn) {
 	s.wg.Add(1)
-	NewRealtimeServer(make(chan TelemetryCommand), s.dispatch.NewListener(), ws, s.wg)
+	NewRealtimeServer(make(chan TelemetryCommand), s.dispatcher.NewReceiver(), ws, s.wg)
 }
 
 func (s telemetryServer) RunServer() {

@@ -20,7 +20,7 @@ type RealtimeServer struct {
 	RequestOut chan<- TelemetryCommand
 	subscribed map[string]bool
 	cmdChannel chan TelemetryCommand
-	dataIn     Listener
+	listener   Receiver
 	ws         *websocket.Conn
 	close      chan bool
 	wg         sync.WaitGroup
@@ -34,13 +34,13 @@ type TelemetryCommand struct {
 	ID  string
 }
 
-func NewRealtimeServer(r chan TelemetryCommand, l Listener, ws *websocket.Conn, wg sync.WaitGroup) RealtimeServer {
+func NewRealtimeServer(tc chan TelemetryCommand, r Receiver, ws *websocket.Conn, wg sync.WaitGroup) RealtimeServer {
 	// configure server
 	rs := RealtimeServer{
-		RequestOut: r,
+		RequestOut: tc,
 		subscribed: make(map[string]bool),
 		cmdChannel: make(chan TelemetryCommand),
-		dataIn:     l,
+		listener:   r,
 		ws:         ws,
 		close:      make(chan bool),
 		counter:    Counter{title: "client", frameSeconds: 3},
@@ -88,8 +88,11 @@ func (rs *RealtimeServer) Recv(c websocket.Codec, ws *websocket.Conn) {
 func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 	switch tc.Cmd {
 	case Subscribe:
+		fmt.Println("Subscribed ", tc.ID)
+		rs.listener.Subscribe(tc.ID)
 		rs.subscribed[tc.ID] = true
 	case Unsubscribe:
+		rs.listener.Unsubscribe(tc.ID)
 		delete(rs.subscribed, tc.ID)
 	}
 }
@@ -103,7 +106,7 @@ func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
 
 	for {
 		select {
-		case i = <-rs.dataIn.Listen():
+		case i = <-rs.listener.Receive():
 			d = i.(Telemetry)
 
 			// if time.Time(d.Timestamp).After(time.Now()) {
@@ -158,5 +161,5 @@ func commandUnmarshal(data []byte, payloadType byte, v interface{}) (err error) 
 func (rs *RealtimeServer) Close(wg sync.WaitGroup) {
 	wg.Done()
 	rs.ws.Close()
-	rs.dataIn.CloseListener()
+	// rs.dataIn.CloseListener()
 }

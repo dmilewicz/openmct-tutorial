@@ -20,7 +20,6 @@ type Parser interface {
 }
 
 type Codec interface {
-	
 }
 
 type bsonParser struct {
@@ -65,17 +64,13 @@ func (bp *bsonParser) ParseTo(i interface{}) ParserBuilder {
 		bp.dataDelivery = reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.PtrTo(v.Type())), 2)
 		break
 	default:
-		
-	}
-	
 
-	
+	}
 
 	return bp
 }
 
 func (bp *bsonParser) Build() Parser {
-
 	return *bp
 }
 
