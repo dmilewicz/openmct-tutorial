@@ -21,10 +21,11 @@ type RealtimeServer struct {
 	subscribed map[string]bool
 	cmdChannel chan TelemetryCommand
 	listener   Receiver
-	ws         *websocket.Conn
-	close      chan bool
-	wg         sync.WaitGroup
-	counter    Counter
+
+	ws      *websocket.Conn
+	close   chan bool
+	wg      sync.WaitGroup
+	counter Counter
 
 	RTCodec websocket.Codec
 }
@@ -97,39 +98,40 @@ func (rs *RealtimeServer) processCommand(tc TelemetryCommand) {
 	}
 }
 
-// Send data through the websocket when available. Process the subscription commands.
-func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
+func (rs *RealtimeServer) run() {
 	var d Telemetry
 	var i interface{}
 	var rtc TelemetryCommand
-	var err error
 
 	for {
 		select {
 		case i = <-rs.listener.Receive():
 			d = i.(Telemetry)
 
-			// if time.Time(d.Timestamp).After(time.Now()) {
-			// 	fmt.Println("After!!!")
-			// } else {
-			// 	fmt.Println("Before!!!")
-			// }
-
 			if _, ok := rs.subscribed[d.Name]; ok {
 				rs.counter.Add(1)
-				err = c.Send(ws, d)
+				rs.dataOut <- d
 			}
-
-			if err != nil {
-				fmt.Println(err)
-				rs.close <- true
-			}
-
 		case rtc = <-rs.cmdChannel:
 			rs.processCommand(rtc)
 		case <-rs.close:
 			rs.wg.Done()
 			return
+		}
+	}
+}
+
+// Send data through the websocket when available. Process the subscription commands.
+func (rs *RealtimeServer) Send(c websocket.Codec, ws *websocket.Conn) {
+	var d Telemetry
+	var err error
+
+	for d = range rs.dataOut {
+		err = c.Send(ws, d)
+
+		if err != nil {
+			fmt.Println(err)
+			rs.close <- true
 		}
 	}
 }
